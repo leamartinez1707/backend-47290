@@ -12,11 +12,10 @@ app.get('/products', async (req, res) => {
 
     const result = await productManager.getProducts()
     const limit = req.query.limit
-    if (!limit || limit == String) return res.send(result)
+    if (!limit) return res.send(result)
+    if (limit == 0) return res.send('<h1>Array is empty</h1>')
     let resultFilt = result.slice(0, limit)
     return res.send(resultFilt)
-
-
 })
 
 app.get('/products/:id', async (req, res) => {
@@ -28,7 +27,7 @@ app.get('/products/:id', async (req, res) => {
 
 })
 
-// App es el servidor web, lo ponemos a escuchar peticiones en el puerto 8080
+// App funciona como servidor web, escuchamos las peticiones en el puerto 8080
 app.listen(8080, () => console.log('Server up!'))
 
 
