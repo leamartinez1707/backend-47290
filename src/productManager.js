@@ -33,7 +33,7 @@ class ProductManager {
         if (!fs.existsSync(this.#path)) return 'Error! The database path does not exist'
         let bs = await fs.promises.readFile(this.#path, 'utf-8')
         let products = JSON.parse(bs)
-
+        console.log(products)
         // Se busca si el codigo del producto a agregar, coincide con alguno de los productos del array
         let foundCode = products.find(prd => product.code === prd.code)
 
@@ -103,8 +103,8 @@ class ProductManager {
         // Convierte el formato de los productos.
         let products = JSON.parse(data)
         // Busca el producto que coincida con el ID escrito.
-        let product = products.find(prd => prd.id === id)
-        if (!product) return 'Error! product not found'
+        let product = products.find(prd => prd.id == id)
+        if (!product) return console.log('Error! product not found')
         return product
     }
 }
