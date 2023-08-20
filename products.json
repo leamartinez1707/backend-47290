@@ -97,5 +97,16 @@
     "category": " ",
     "code": "9099",
     "stock": 2
+  },
+  {
+    "id": 11,
+    "title": "producto 11 editado",
+    "description": "Este es un producto prueba 11",
+    "price": 200,
+    "thumbnail": [],
+    "status": true,
+    "category": " ",
+    "code": "abc889",
+    "stock": 25
   }
 ]

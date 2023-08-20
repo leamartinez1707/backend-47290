@@ -83,6 +83,11 @@ class ProductManager {
             } else return prd
         })
         if (!ifFound) return 'Error! product not found for update'
+        // Busca si el codigo del producto a agregar, coincide con alguno de los productos del array
+        let foundCode = products.find(prd => updateProduct.code === prd.code)
+
+        // Si el objeto ya existe, se le avisa al usuario
+        if (foundCode) return `Error! this product with CODE: ${updateProduct.code} already exists`
         // Sobrescribe el archivo y guarda el nuevo array con el producto actualizado.
         await fs.promises.writeFile(this.#path, JSON.stringify(newProducts, null, 2))
         return newProducts.find(pr => pr.id === id)

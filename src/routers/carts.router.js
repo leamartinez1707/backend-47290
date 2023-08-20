@@ -10,7 +10,7 @@ router.get('/:cid', async (req, res) => {
 
     const cid = parseInt(req.params.cid)
     const result = await cartManager.getCart(cid)
-    if (!result) return res.status(404).send({ status: 'error', error: 'Error! Could not get the cart' })
+    if (!result) return res.status(404).send({ status: 'error', error: 'Error! Cart was not found' })
     return res.status(200).json({ status: 'sucess', payload: result })
 })
 
@@ -26,7 +26,7 @@ router.post('/:cid/product/:pid', async (req, res) => {
     const cid = parseInt(req.params.cid)
     const pid = parseInt(req.params.pid)
     const result = await cartManager.addProduct(cid, pid)
-    if (!result) return res.status(400).send({ status: 'error', error: 'Error! Product could not be added' })
+    if (typeof result == 'string') return res.status(400).send({ status: 'error', error: result })
     return res.status(201).json({ status: 'sucess', payload: result })
 })
 
