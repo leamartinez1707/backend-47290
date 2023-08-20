@@ -1,33 +1,24 @@
 import express from 'express'
-import ProductManager from './productManager.js'
+import productRouter from './routers/products.router.js'
+import cartsRouter from './routers/carts.router.js'
 
 const app = express();
-const productManager = new ProductManager('./products.json')
 
-app.get('/', (req, res) => {
-    res.send('<h1>Hello world!!</h2>')
-})
+// Para cargar archivos en formato json con POST
+app.use(express.json())
 
-app.get('/products', async (req, res) => {
+// Con esta expresion permitimos enviar datos POST desde un formulario HTML
+// app.use(express.urlencoded({ extended: true }))
 
-    const result = await productManager.getProducts()
-    const limit = req.query.limit
-    if (!limit) return res.send(result)
-    if (limit == 0) return res.send('<h1>Array is empty</h1>')
-    let resultFilt = result.slice(0, limit)
-    return res.send(resultFilt)
-})
+// productRouter se ejecuta solo cuando alguien ingresa a /products
+app.use('/api/products', productRouter)
+// cartsRouter se ejecuta solo cuando alguien ingresa a /carts
+app.use('/api/carts', cartsRouter)
 
-app.get('/products/:id', async (req, res) => {
-
-    const id = req.params.id
-    const result = await productManager.getProductByID(id)
-    if (!result) return res.send('<h1>No existe el objeto con el ID especificado.</h1>')
-    return res.send(result)
-
-})
+// Permite leer los archivos de la carpeta public
+// app.use(express.static('./public'))
 
 // App funciona como servidor web, escuchamos las peticiones en el puerto 8080
-app.listen(8080, () => console.log('Server up!'))
+app.listen(8080, () => console.log('Server is up !!'))
 
 

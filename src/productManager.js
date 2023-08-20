@@ -26,24 +26,24 @@ class ProductManager {
     async addProduct(product) {
 
         // Si el usuario no completa todos los datos, no se agrega el objeto
-        if (!product.title || !product.description || !product.price || !product.thumbnail || !product.code || !product.stock) {
+        if (!product.title || !product.description || !product.price || !product.thumbnail || !product.code || !product.stock || !product.category || !product.status) {
             return console.error('Error! Complete all fields')
         }
         // Verifica si la "base de datos" existe
         if (!fs.existsSync(this.#path)) return 'Error! The database path does not exist'
         let bs = await fs.promises.readFile(this.#path, 'utf-8')
+        // Convierte el formato de los productos.
         let products = JSON.parse(bs)
-        console.log(products)
-        // Se busca si el codigo del producto a agregar, coincide con alguno de los productos del array
+        // Busca si el codigo del producto a agregar, coincide con alguno de los productos del array
         let foundCode = products.find(prd => product.code === prd.code)
 
         // Si el objeto ya existe, se le avisa al usuario
-        if (foundCode) return 'Error! this product already exist'
+        if (foundCode) return `Error! this product with CODE: ${product.code} already exists`
 
         // En caso de que todas las condiciones esten bien, se pushea el objeto al array. Primero estableciendo una variable que cree el producto a agregar con su ID correspondiente.
         const prdToAdd = { id: this.#generateID(products), ...product }
         products.push(prdToAdd)
-        // Escribe sobre el archivo y guarda el producto.
+        // Sobreescribe el archivo JSON y guardando el array actualizado.
         await fs.promises.writeFile(this.#path, JSON.stringify(products, null, 2))
         return prdToAdd
     }
@@ -51,15 +51,16 @@ class ProductManager {
     async deleteProduct(id) {
         // Verifica si la "base de datos" existe
         if (!fs.existsSync(this.#path)) return 'Error! The database path does not exist'
-        let ifFound = false
         let bs = await fs.promises.readFile(this.#path, 'utf-8')
+        // Convierte el formato de los productos.
         let products = JSON.parse(bs)
-        // Crea un nuevo aray con todos los productos que no contengan el ID marcado.
+        // Crea un nuevo array con todos los productos que no contengan el ID marcado.
         let newProducts = products.filter(prd => prd.id !== id)
         // Si la longitud del array anterior y del nuevo es distinta, entonces el producto fue encontrado y eliminado correctamente.
+        let ifFound = false
         if (products.length !== newProducts.length) ifFound = true
-        if (!ifFound) return 'Error! this product not exist'
-        // Escribe sobre el archivo y guarda el nuevo array con el producto borrado.
+        if (!ifFound) return 'Error! this product does not exists'
+        // Sobreescribe el archivo y guarda el nuevo array con el producto borrado.
         await fs.promises.writeFile(this.#path, JSON.stringify(newProducts, null, 2))
         return newProducts;
     }
@@ -67,10 +68,10 @@ class ProductManager {
     async updateProduct(id, updateProduct) {
         // Verifica si la "base de datos" existe
         if (!fs.existsSync(this.#path)) return 'Error! The database path does not exist'
-        let ifFound = false
         let bs = await fs.promises.readFile(this.#path, 'utf-8')
         // Convierte el formato de los productos.
         let products = JSON.parse(bs)
+        let ifFound = false
         // Crea un nuevo array de productos, y el producto que coincide con el ID, es actualizado. Primero desglosa el producto y luego carga los datos nuevos.
         let newProducts = products.map(prd => {
             if (prd.id === id) {
@@ -81,7 +82,7 @@ class ProductManager {
                 }
             } else return prd
         })
-        if (!ifFound) return 'Error! product not found'
+        if (!ifFound) return 'Error! product not found for update'
         // Sobrescribe el archivo y guarda el nuevo array con el producto actualizado.
         await fs.promises.writeFile(this.#path, JSON.stringify(newProducts, null, 2))
         return newProducts.find(pr => pr.id === id)
@@ -92,18 +93,19 @@ class ProductManager {
         if (!fs.existsSync(this.#path)) return 'Error! The database path does not exist'
         let bs = await fs.promises.readFile(this.#path, 'utf-8')
         // Convierte el formato de los productos.
-        const products = JSON.parse(bs)
+        let products = JSON.parse(bs)
         return products
     }
 
     async getProductByID(id) {
         // Verifica si la "base de datos" existe
         if (!fs.existsSync(this.#path)) return 'Error! The database path does not exist'
-        let data = await fs.promises.readFile(this.#path, 'utf-8')
+        let bs = await fs.promises.readFile(this.#path, 'utf-8')
         // Convierte el formato de los productos.
-        let products = JSON.parse(data)
+        let products = JSON.parse(bs)
+        if (!products) return 'Error! Products were not found'
         // Busca el producto que coincida con el ID escrito.
-        let product = products.find(prd => prd.id == id)
+        let product = products.find(prd => prd.id === id)
         if (!product) return console.log('Error! product not found')
         return product
     }
