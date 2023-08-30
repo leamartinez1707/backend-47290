@@ -108,5 +108,25 @@
     "category": " ",
     "code": "abc889",
     "stock": 25
+  },
+  {
+    "id": 12,
+    "title": "prueb77",
+    "description": "prueb77",
+    "price": "3333",
+    "code": "3323322",
+    "category": "prueb77",
+    "stock": "111",
+    "thumbnail": "noimg"
+  },
+  {
+    "id": 13,
+    "title": "prueb06",
+    "description": "prueb06",
+    "price": "33",
+    "code": "prueb0611",
+    "category": "prueb06",
+    "stock": "4",
+    "thumbnail": "noimg"
   }
 ]

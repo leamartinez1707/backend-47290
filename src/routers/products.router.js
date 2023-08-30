@@ -11,10 +11,13 @@ router.get('/', async (req, res) => {
 
     const result = await productManager.getProducts()
     const limit = req.query.limit
-    if (!limit) return res.status(200).json({ status: 'sucess', payload: result })
+    if (!limit) return res.status(200).render('home', { result }
+    )
+    // .json({ status: 'sucess', payload: result })
     if (limit == 0) return res.status(204).send({ status: 'error', error: 'Array is empty' })
     let resultFilt = result.slice(0, limit)
     return res.status(200).json({ status: 'sucess', payload: resultFilt })
+
 })
 
 router.get('/:pid', async (req, res) => {

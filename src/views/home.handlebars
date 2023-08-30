@@ -1,0 +1,27 @@
+<div class="container">
+    <div class="title text-center justify-content-center">
+        <h1 class="title-h1">Bienvenido!!</h1>
+    </div>
+    <hr>
+    <br>
+    <table class="table table-white table-striped">
+        <tr class="fw-bold">
+            <td>Id</td>
+            <td>Título</td>
+            <td>Descripción</td>
+            <td>Precio</td>
+            <td>Categoria</td>
+            <td>Stock</td>
+        </tr>
+        {{#each result}}
+        <tr>
+            <td>{{this.id}}</td>
+            <td>{{this.title}}</td>
+            <td>{{this.description}}</td>
+            <td>$ {{this.price}}</td>
+            <td>{{this.category}}</td>
+            <td>{{this.stock}}</td>
+        </tr>
+        {{/each}}
+    </table>
+</div>

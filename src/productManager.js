@@ -26,7 +26,7 @@ class ProductManager {
     async addProduct(product) {
 
         // Si el usuario no completa todos los datos, no se agrega el objeto
-        if (!product.title || !product.description || !product.price || !product.thumbnail || !product.code || !product.stock || !product.category || !product.status) {
+        if (!product.title || !product.price || !product.thumbnail || !product.code || !product.stock || !product.category) {
             return console.error('Error! Complete all fields')
         }
         // Verifica si la "base de datos" existe
