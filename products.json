@@ -100,33 +100,32 @@
   },
   {
     "id": 11,
-    "title": "producto 11 editado",
-    "description": "Este es un producto prueba 11",
-    "price": 200,
-    "thumbnail": [],
-    "status": true,
-    "category": " ",
-    "code": "abc889",
-    "stock": 25
+    "title": "PR11",
+    "description": "PR11",
+    "price": "1",
+    "code": "3",
+    "category": "PR11",
+    "stock": "2",
+    "thumbnail": "PR11"
   },
   {
     "id": 12,
-    "title": "prueb77",
-    "description": "prueb77",
-    "price": "3333",
-    "code": "3323322",
-    "category": "prueb77",
-    "stock": "111",
-    "thumbnail": "noimg"
+    "title": "PR12",
+    "description": "PR12",
+    "price": "1",
+    "code": "31",
+    "category": "PR12",
+    "stock": "1",
+    "thumbnail": "PR12"
   },
   {
     "id": 13,
-    "title": "prueb06",
-    "description": "prueb06",
-    "price": "33",
-    "code": "prueb0611",
-    "category": "prueb06",
-    "stock": "4",
-    "thumbnail": "noimg"
+    "title": "PB13",
+    "description": "PB13",
+    "price": "1",
+    "code": "PB13PB13",
+    "category": "1",
+    "stock": "1",
+    "thumbnail": "1"
   }
 ]

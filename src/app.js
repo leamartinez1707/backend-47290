@@ -32,18 +32,26 @@ app.use('/realtimeproducts', viewsRouter)
 const httpsrv = app.listen(8080, () => console.log('Server is up !!'))
 const socketServer = new Server(httpsrv)
 
-let log = []
-
 const productManager = new ProductManager('./products.json')
 
 socketServer.on('connection', async (socketClient) => {
     console.log(`Nuevo cliente conectado: ${socketClient.id}`)
 
-    socketClient.on('message', async product => {
-        await productManager.addProduct(product)
+    socketClient.on('con', async data => {
+        let productsList = await productManager.getProducts()
+        socketClient.emit('products', productsList)
     })
-    const productsList = await productManager.getProducts()
-    socketClient.emit('products', productsList)
+
+    socketClient.on('add', async product => {
+        await productManager.addProduct(product)
+        let productsList = await productManager.getProducts()
+        socketClient.emit('products', productsList)
+    })
+    socketClient.on('deletePrd', async id => {
+        await productManager.deleteProduct(id)
+        let productsList = await productManager.getProducts()
+        socketClient.emit('products', productsList)
+    })
 })
 
 
