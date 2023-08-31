@@ -1,19 +1,38 @@
 const socketClient = io()
+
+// Muestra los productos al entrar en la pagina.
 socketClient.emit('con', 'conectado')
 
 let form = document.getElementById("formulario")
-let btnDelete = document.getElementById("btn_delete")
 let tableB = document.getElementById("table-body")
-
 let product = {}
 
-function deleteProduct(id) {
-    return console.log(id)
+// Swal.fire
+function swalDelete() {
+    Swal.fire({
+        title: `Producto borrado!!`,
+        text: "Se borró el producto correctamente",
+        icon: "warning"
+    })
 }
-
+// Swal.fire
+function swalAdded() {
+    Swal.fire({
+        title: `Producto agregado!!`,
+        text: "Se agregó el producto correctamente",
+        icon: "success"
+    })
+}
+// Resetea el formulario para que quede vacio.
 function resetForm(obj) {
     obj.reset()
 }
+// Vacia la tabla de productos
+function emptyTable() {
+
+    tableB.innerHTML = " "
+}
+// Crea una TableRow con las propiedades de cada producto y las inserta en la tabla.
 function showProducts(list) {
     list.forEach(prd => {
 
@@ -26,6 +45,7 @@ function showProducts(list) {
             <td>$ ${prd.price}</td>
             <td>${prd.category}</td>
             <td>${prd.stock}</td>
+            <td>${prd.code}</td>
             <td><btn class="btn btn-danger btn_delete" onClick="deleteProduct(${prd.id})">Eliminar</btn>
             </td>
             `
@@ -33,24 +53,12 @@ function showProducts(list) {
         tableB.append(fila)
     })
 }
-function productAdded() {
-    Swal.fire({
-        title: `Producto agregado!!`,
-        text: "Se agregó el producto correctamente",
-        icon: "success"
-    })
+// Borra el producto seleccionado, mediante el ID que se le pasa desde el boton.
+function deleteProduct(id) {
+    emptyTable()
+    socketClient.emit('delete', id)
+    swalDelete()
 }
-function emptyTable() {
-    tableB.innerHTML = " "
-}
-
-
-// Escucha al servidor, donde se envió la lista de productos guardada, e inserta los productos en una tabla mediante una funcion.
-socketClient.on('products', data => {
-    showProducts(data)
-
-})
-
 // Agregar un producto con los datos obtenidos en el formulario
 form.addEventListener("submit", (ev) => {
     ev.preventDefault()
@@ -65,14 +73,16 @@ form.addEventListener("submit", (ev) => {
         thumbnail: document.getElementById("thumbnail").value
     }
 
-    productAdded()
+    swalAdded()
     emptyTable()
     resetForm(form)
     socketClient.emit('add', product)
     return (false);
 })
-
-
+// Escucha al servidor, donde se envió la lista de productos guardada, e inserta los productos en una tabla mediante una funcion.
+socketClient.on('products', data => {
+    showProducts(data)
+})
 
 
 

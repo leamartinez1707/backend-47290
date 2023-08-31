@@ -26,7 +26,7 @@ app.use('/api/products', productRouter)
 // cartsRouter se ejecuta solo cuando alguien ingresa a /carts
 app.use('/api/carts', cartsRouter)
 
-app.use('/realtimeproducts', viewsRouter)
+app.use('/', viewsRouter)
 
 // App funciona como servidor web, escuchamos las peticiones en el puerto 8080
 const httpsrv = app.listen(8080, () => console.log('Server is up !!'))
@@ -47,10 +47,11 @@ socketServer.on('connection', async (socketClient) => {
         let productsList = await productManager.getProducts()
         socketClient.emit('products', productsList)
     })
-    socketClient.on('deletePrd', async id => {
+    socketClient.on('delete', async id => {
         await productManager.deleteProduct(id)
         let productsList = await productManager.getProducts()
         socketClient.emit('products', productsList)
+    
     })
 })
 
