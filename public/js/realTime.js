@@ -1,7 +1,4 @@
-const socketClient = io()
-
-// Muestra los productos al entrar en la pagina.
-socketClient.emit('con', 'conectado')
+const socket = io()
 
 let form = document.getElementById("formulario")
 let tableB = document.getElementById("table-body")
@@ -56,7 +53,7 @@ function showProducts(list) {
 // Borra el producto seleccionado, mediante el ID que se le pasa desde el boton.
 function deleteProduct(id) {
     emptyTable()
-    socketClient.emit('delete', id)
+    socket.emit('delete', id)
     swalDelete()
 }
 // Agregar un producto con los datos obtenidos en el formulario
@@ -74,13 +71,14 @@ form.addEventListener("submit", (ev) => {
     }
 
     swalAdded()
-    emptyTable()
     resetForm(form)
-    socketClient.emit('add', product)
+    socket.emit('add', product)
     return (false);
 })
 // Escucha al servidor, donde se envió la lista de productos guardada, e inserta los productos en una tabla mediante una funcion.
-socketClient.on('products', data => {
+// Luego de obtener los productos, limpia la tabla de todos los sockets conectados e inserta los productos actualizados.
+socket.on('products', data => {
+    emptyTable()
     showProducts(data)
 })
 

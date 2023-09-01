@@ -30,28 +30,25 @@ app.use('/', viewsRouter)
 
 // App funciona como servidor web, escuchamos las peticiones en el puerto 8080
 const httpsrv = app.listen(8080, () => console.log('Server is up !!'))
-const socketServer = new Server(httpsrv)
+const io = new Server(httpsrv)
 
 const productManager = new ProductManager('./products.json')
 
-socketServer.on('connection', async (socketClient) => {
-    console.log(`Nuevo cliente conectado: ${socketClient.id}`)
+io.on('connection', async (socket) => {
+    console.log(`Nuevo cliente conectado: ${socket.id}`)
+    const productsList = await productManager.getProducts()
+    socket.emit('products', productsList)
 
-    socketClient.on('con', async data => {
-        let productsList = await productManager.getProducts()
-        socketClient.emit('products', productsList)
-    })
-
-    socketClient.on('add', async product => {
+    socket.on('add', async product => {
         await productManager.addProduct(product)
-        let productsList = await productManager.getProducts()
-        socketClient.emit('products', productsList)
+        const productsList = await productManager.getProducts()
+        io.emit('products', productsList)
     })
-    socketClient.on('delete', async id => {
+    socket.on('delete', async id => {
         await productManager.deleteProduct(id)
         let productsList = await productManager.getProducts()
-        socketClient.emit('products', productsList)
-    
+        io.emit('products', productsList)
+
     })
 })
 
