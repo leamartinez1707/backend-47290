@@ -1,27 +1,29 @@
 <div class="container">
     <div class="title text-center justify-content-center">
-        <h1 class="title-h1">Bienvenido!!</h1>
+        <h1 class="title-h1">Bienvenido a eleM</h1>
     </div>
     <hr>
     <br>
-    <table class="table table-white table-striped">
-        <tr class="fw-bold">
-            <td>Id</td>
-            <td>Título</td>
-            <td>Descripción</td>
-            <td>Precio</td>
-            <td>Categoria</td>
-            <td>Stock</td>
-        </tr>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
         {{#each result}}
-        <tr>
-            <td>{{this.id}}</td>
-            <td>{{this.title}}</td>
-            <td>{{this.description}}</td>
-            <td>$ {{this.price}}</td>
-            <td>{{this.category}}</td>
-            <td>{{this.stock}}</td>
-        </tr>
+        <div class="col">
+            <div class="card h-100 text-center">
+                <img src="{{this.thumbnail}}" class="card-img-top h-100 border" alt="{{this.title}}">
+                <div class="card-body">
+                    <h5 class="card-title">{{this.title}}</h5>
+                    <p class="card-text">{{this.description}}</p>
+                    <p class="card-text"><small class="text-body-secondary">{{this.stock}}</small></p>
+                    <p class="card-text"><small class="text-body-secondary">{{this.category}}</small></p>
+                    <p class="card-text"><small class="text-body-secondary">{{this.code}}</small></p>
+                    
+                </div>
+                <div class="footer mb-2">
+                    <button type="button" class="btn border ">Agregar producto</button>
+                    <button type="button" class="btn border ">Eliminar producto</button>
+                </div>
+            </div>
+        </div>
         {{/each}}
-    </table>
+    </div>
 </div>
