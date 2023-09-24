@@ -37,13 +37,14 @@ function showProducts(list) {
         let fila = document.createElement("tr")
         fila.innerHTML = `
             
+            <td>${prd._id}</td>
             <td>${prd.title}</td>
             <td>${prd.description}</td>
             <td>$ ${prd.price}</td>
             <td>${prd.category}</td>
             <td>${prd.stock}</td>
             <td>${prd.code}</td>
-            <td><btn class="btn btn-danger btn_delete" onClick="deleteProduct(${prd.id})">Eliminar</btn>
+            <td><btn class="btn btn-danger btn_delete" onClick="deleteProduct('${prd._id}')">Eliminar</btn>
             </td>
             `
 
@@ -51,9 +52,10 @@ function showProducts(list) {
     })
 }
 // Borra el producto seleccionado, mediante el ID que se le pasa desde el boton.
-function deleteProduct(id) {
+function deleteProduct(pid) {
     emptyTable()
-    socket.emit('delete', id)
+    socket.emit('delete', pid)
+    console.log(pid)
     swalDelete()
 }
 // Agregar un producto con los datos obtenidos en el formulario
