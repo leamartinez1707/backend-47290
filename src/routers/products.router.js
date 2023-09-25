@@ -70,7 +70,7 @@ router.get('/', async (req, res) => {
 
     // const result = await productManager.getProducts()
     let result = await getProducts(req, res)
-    return res.status(200).json({ status: 'sucess', payload: resultFilt })
+    return res.status(200).json({ status: 'sucess', payload: result })
 
 })
 

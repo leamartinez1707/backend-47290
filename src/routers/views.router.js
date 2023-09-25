@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { getProducts } from "./products.router.js";
+import { cartModel } from "../dao/models/cart.model.js";
+import { getProductsFromCart } from "./carts.router.js";
 
 const router = Router()
 
@@ -34,10 +36,22 @@ router.get('/', async (req, res) => {
 
 })
 
+// LO ESTA RENDERIZANDO CUANDO ENTRO A /PRODUCTS
 
+// router.get('/:cid', async (req, res) => {
+//     try {
 
+//         let cart = await getProductsFromCart(req, res)
+//         console.log(cart.response.payload.products)
+//         res.status(200).render("cart", {
+//             cartProducts: cart.response.payload.products,
 
-
+//         })
+//     }
+//     catch (error) {
+//         console.log(error.message)
+//     }
+// })
 
 
 router.get('/realtimeproducts', (req, res) => {
