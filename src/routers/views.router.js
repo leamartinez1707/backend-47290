@@ -2,6 +2,7 @@ import { Router } from "express";
 import { getProducts } from "./products.router.js";
 import { cartModel } from "../dao/models/cart.model.js";
 import { getProductsFromCart } from "./carts.router.js";
+import { productModel } from "../dao/models/product.model.js";
 
 const router = Router()
 
@@ -31,9 +32,16 @@ router.get('/', async (req, res) => {
             }
         })
     } else {
-        res.status(result.statusCode).json({ status: error, error: result.response.error })
+        res.status(result.statusCode).json({ status: 'error', error: result.response.error })
     }
 
+})
+router.get('/:pid', async (req, res) => {
+    let pid = req.params.pid
+    let product = await productModel.findById(pid)
+    console.log(product)
+    if (!product) return res.status(404).json({ status: 'error', error: 'Product was not found' })
+    res.status(200).render("productDetail",  product )
 })
 
 // LO ESTA RENDERIZANDO CUANDO ENTRO A /PRODUCTS

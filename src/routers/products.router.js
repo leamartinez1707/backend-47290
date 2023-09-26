@@ -70,7 +70,7 @@ router.get('/', async (req, res) => {
 
     // const result = await productManager.getProducts()
     let result = await getProducts(req, res)
-    return res.status(200).json({ status: 'sucess', payload: result })
+    return res.status(200).json({ status: 'success', payload: result })
 
 })
 
@@ -79,7 +79,7 @@ router.get('/:pid', async (req, res) => {
     let pid = req.params.pid
     const result = await productModel.findOne({ _id: pid })
     if (!result) return res.status(404).send({ status: 'error', error: 'Product does not exists' })
-    return res.status(200).json({ status: 'sucess', payload: result })
+    return res.status(200).json({ status: 'success', payload: result })
 
 })
 
@@ -91,7 +91,7 @@ router.post('/', async (req, res) => {
         title, description, price, code, category, stock, thumbnail
     })
     if (!result) return res.status(400).send({ status: 'error', error: 'The product could not be added' })
-    return res.status(201).send({ status: 'sucess', payload: result })
+    return res.status(201).send({ status: 'success', payload: result })
 
 })
 router.put('/:pid', async (req, res) => {
@@ -102,7 +102,7 @@ router.put('/:pid', async (req, res) => {
         return res.send({ status: 'error', error: 'Incomplete values' })
     let result = await productModel.updateOne({ _id: pid }, productToUpdate)
     if (!result) return res.status(400).send({ status: 'error', error: 'The product could not be updated' })
-    return res.status(200).json({ status: 'sucess', payload: result })
+    return res.status(200).json({ status: 'success', payload: result })
 
 })
 
@@ -111,6 +111,6 @@ router.delete('/:pid', async (req, res) => {
     let pid = req.params.pid
     let result = await productModel.deleteOne({ _id: pid })
     if (!result) return res.status(400).send({ status: 'error', error: 'The product could not be deleted' })
-    return res.status(200).json({ status: 'sucess', payload: result })
+    return res.status(200).json({ status: 'success', payload: result })
 })
 export default router
