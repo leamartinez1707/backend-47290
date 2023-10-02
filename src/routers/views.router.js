@@ -1,12 +1,12 @@
 import { Router } from "express";
 import { getProducts } from "./products.router.js";
-import { cartModel } from "../dao/models/cart.model.js";
-import { getProductsFromCart } from "./carts.router.js";
+import { getProductsFromCart } from '../routers/carts.router.js'
 import { productModel } from "../dao/models/product.model.js";
+import { publicRoutes } from "../middlewares/auth.middlewares.js"
 
 const router = Router()
 
-router.get('/', async (req, res) => {
+router.get('/', publicRoutes, async (req, res) => {
 
     let result = await getProducts(req, res)
     if (result.statusCode === 200) {
@@ -21,7 +21,9 @@ router.get('/', async (req, res) => {
             }
             totalPages.push({ page: index, link })
         }
+        const user = req.session.user
         res.render("home", {
+            user,
             products: result.response.payload,
             paginateInfo: {
                 hasPrevPage: result.response.hasPrevPage,
@@ -32,39 +34,43 @@ router.get('/', async (req, res) => {
             }
         })
     } else {
-        res.status(result.statusCode).json({ status: 'error', error: result.response.error })
+        console.log(result.response.error)
+        res.status(result.statusCode).render("pageError")
     }
 
 })
-router.get('/:pid', async (req, res) => {
-    let pid = req.params.pid
-    let product = await productModel.findById(pid)
-    console.log(product)
-    if (!product) return res.status(404).json({ status: 'error', error: 'Product was not found' })
-    res.status(200).render("productDetail",  product )
+
+router.get('/product/:pid', async (req, res) => {
+    try {
+        let pid = req.params.pid
+
+        let product = await productModel.findById(pid)
+        if (product === null) return res.status(404).render("pageError")
+        res.status(200).render("productDetail", product)
+    } catch (err) {
+        console.log('Error /pid')
+        res.status(500).render("pageError")
+    }
 })
-
-// LO ESTA RENDERIZANDO CUANDO ENTRO A /PRODUCTS
-
-// router.get('/:cid', async (req, res) => {
-//     try {
-
-//         let cart = await getProductsFromCart(req, res)
-//         console.log(cart.response.payload.products)
-//         res.status(200).render("cart", {
-//             cartProducts: cart.response.payload.products,
-
-//         })
-//     }
-//     catch (error) {
-//         console.log(error.message)
-//     }
-// })
-
 
 router.get('/realtimeproducts', (req, res) => {
 
     res.render("realTimeProducts")
+})
+router.get('/carts/:cid', async (req, res) => {
+
+
+    let cart = await getProductsFromCart(req, res)
+    console.log(cart.statusCode)
+    if (cart.statusCode === 200) {
+        res.status(cart.statusCode).render("cart", {
+            cartProducts: cart.response.payload.products,
+        })
+    } else {
+        consnole.log('Error /cid')
+        res.status(cart.statusCode).render("pageError")
+    }
+
 })
 
 export default router

@@ -1,7 +1,5 @@
 import mongoose from "mongoose";
 
-
-
 const cartCollection = 'carts'
 const cartSchema = new mongoose.Schema({
 
@@ -21,4 +19,5 @@ const cartSchema = new mongoose.Schema({
 
 mongoose.set('strictQuery', false)
 
-export const cartModel = mongoose.model(cartCollection, cartSchema)
+const cartModel = mongoose.model(cartCollection, cartSchema)
+export default cartModel

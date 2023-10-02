@@ -1,14 +1,31 @@
 import express from 'express'
-import { productModel } from './dao/models/product.model.js'
-import { Server } from 'socket.io'
 import mongoose from 'mongoose'
+import MongoStore from 'connect-mongo'
+import session from 'express-session'
 import handlebars from 'express-handlebars'
+import { Server } from 'socket.io'
+import { productModel } from './dao/models/product.model.js'
 import productRouter from './routers/products.router.js'
 import cartsRouter from './routers/carts.router.js'
 import viewsRouter from './routers/views.router.js'
+import sessionViewRouter from './routers/sessionView.router.js'
+import sessionRouter from './routers/session.router.js'
 
 
 const app = express();
+
+const MONGO_URL = 'mongodb+srv://leamartinez1707:leandro1707@elemcluster.qnq63c2.mongodb.net'
+const MONGO_DB = 'ecommerce'
+
+app.use(session({
+    store: MongoStore.create({
+        mongoUrl: MONGO_URL,
+        dbName: MONGO_DB
+    }),
+    secret: 'secreto',
+    resave: true,
+    saveUninitialized: true
+}))
 
 // Para cargar archivos en formato json con POST
 app.use(express.json())
@@ -23,29 +40,29 @@ app.use(express.static('./public'))
 // Con esta expresion permitimos enviar datos POST desde un formulario HTML
 // app.use(express.urlencoded({ extended: true }))
 
-app.use('/', viewsRouter)
-// productRouter se ejecuta solo cuando alguien ingresa a /products
+app.use('/', sessionViewRouter)
+app.use('/api/sessions', sessionRouter)
 app.use('/api/products', productRouter)
-// cartsRouter se ejecuta solo cuando alguien ingresa a /carts
 app.use('/api/carts', cartsRouter)
 app.use('/products', viewsRouter)
 app.use('/carts', viewsRouter)
-// app.use('/chat', chatRouter)
+
+
 
 
 try {
 
     // Conexion a la base de datos de Mongoose
-    await mongoose.connect('mongodb+srv://leamartinez1707:leandro1707@elemcluster.qnq63c2.mongodb.net', {
-        dbName: 'ecommerce'
+    await mongoose.connect(MONGO_URL, {
+        dbName: MONGO_DB
     })
-    console.log('conectado a la DB')
+    console.log('Conectado a la DB')
 
     // App funciona como servidor web, escuchamos las peticiones en el puerto 8080
     const httpsrv = app.listen(8080, () => console.log('Server is up !!'))
 
     const io = new Server(httpsrv)
-    
+
     io.on('connection', async (socket) => {
         console.log(`Nuevo cliente conectado: ${socket.id}`)
         const productsList = await productModel.find().lean()
