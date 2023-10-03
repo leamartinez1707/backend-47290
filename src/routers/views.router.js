@@ -40,7 +40,7 @@ router.get('/', publicRoutes, async (req, res) => {
 
 })
 
-router.get('/product/:pid', async (req, res) => {
+router.get('/product/:pid', publicRoutes, async (req, res) => {
     try {
         let pid = req.params.pid
 
@@ -53,17 +53,18 @@ router.get('/product/:pid', async (req, res) => {
     }
 })
 
-router.get('/realtimeproducts', (req, res) => {
+router.get('/realtimeproducts', publicRoutes, (req, res) => {
 
     res.render("realTimeProducts")
 })
-router.get('/carts/:cid', async (req, res) => {
+router.get('/:cid', publicRoutes, async (req, res) => {
 
 
     let cart = await getProductsFromCart(req, res)
-    console.log(cart.statusCode)
+    
     if (cart.statusCode === 200) {
         res.status(cart.statusCode).render("cart", {
+            cartId: cart.response.payload._id,
             cartProducts: cart.response.payload.products,
         })
     } else {

@@ -1,27 +1,25 @@
 import { Router } from "express";
-import userModel from '../dao/models/user.model.js'
+import UserModel from '../dao/models/user.model.js'
+
 const router = Router()
 
 
 router.post('/register', async (req, res) => {
 
-    try {
-        const { first_name, last_name, email, age, password, role } = req.body
-        const result = await userModel.create({ first_name, last_name, email, age, password, role })
 
-        res.redirect('/')
-    } catch (error) {
+    let { first_name, last_name, email, age, password } = req.body
+    await UserModel.create({ first_name, last_name, email, age, password })
+    res.redirect('/')
 
-        res.status(400).send({ status: 'error', error: 'The user could not be registed' })
-    }
 })
 
 router.post('/login', async (req, res) => {
 
     let { email, password } = req.body
-    const user = await userModel.findOne({ email, password }).lean().exec()
+    const user = await UserModel.findOne({ email, password }).lean().exec()
+
     if (!user) {
-        res.redirect('/')
+        return res.redirect('/')
     }
     if (user.email === 'adminCoder@coder.com' || user.password === 'adminCod3r123') {
         user.role = 'admin'
@@ -29,7 +27,7 @@ router.post('/login', async (req, res) => {
         user.role = 'user'
     }
     req.session.user = user
-    res.redirect('/products')
+    res.redirect('/')
 })
 
 
@@ -38,9 +36,8 @@ router.get('/logout', (req, res) => {
         if (err) {
             console.log(err)
             res.status(500).render('pageError')
-        } else {
-            res.redirect('/')
-        }
+        } else res.redirect('/')
+
     })
 })
 

@@ -38,7 +38,7 @@ app.set('view engine', 'handlebars')
 app.use(express.static('./public'))
 
 // Con esta expresion permitimos enviar datos POST desde un formulario HTML
-// app.use(express.urlencoded({ extended: true }))
+app.use(express.urlencoded({ extended: true }))
 
 app.use('/', sessionViewRouter)
 app.use('/api/sessions', sessionRouter)
