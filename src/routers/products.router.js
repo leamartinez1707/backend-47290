@@ -20,10 +20,12 @@ export const getProducts = async (req, res) => {
 
         const result = await productModel.paginate(pageFilters, paginateOpt)
 
+
         let previousLink
 
         if (req.query.page) {
-            const modifiedUrl = req.originalUrl.replace(`?page=${req.query.page}`, `page=${result.prevPage}`)
+            
+            const modifiedUrl = req.originalUrl.replace(`page=${req.query.page}`, `page=${result.prevPage}`)
             previousLink = `http://${req.hostname}:8080${modifiedUrl}`
         } else {
             previousLink = `http://${req.hostname}:8080${req.originalUrl}&page=${result.prevPage}`
