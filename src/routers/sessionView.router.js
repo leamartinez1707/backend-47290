@@ -15,10 +15,8 @@ router.get('/register', privateRoutes, async (req, res) => {
 router.get('/profile', publicRoutes, (req, res) => {
 
     res.render('sessions/profile', req.session.user)
-
-    // 
 })
 
-router.get('/session/failRegister', (req, res) => res.send({ error: 'Error failRegister' }))
+router.get('/session/error', (req, res) => res.render('pageError'))
 
 export default router

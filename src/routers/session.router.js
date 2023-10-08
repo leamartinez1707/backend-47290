@@ -4,16 +4,16 @@ import passport from "passport";
 const router = Router()
 
 
-router.post('/register', passport.authenticate('register', { failureRedirect: '/session/failRegister' }), async (req, res) => {
+router.post('/register', passport.authenticate('register', { failureRedirect: '/session/error' }), async (req, res) => {
 
     res.redirect('/')
 
 })
 
-router.post('/login', passport.authenticate('login', { failureRedirect: '/session/failRegister' }), async (req, res) => {
+router.post('/login', passport.authenticate('login', { failureRedirect: '/session/error' }), async (req, res) => {
 
     if (!req.user) {
-        return res.status(400).send({ status: 'error', error: 'Invalid credentials' })
+        res.status(400).send({ status: 'error', error: error.message })
     }
     if (req.user.email === 'adminCoder@coder.com' || req.user.password === 'adminCod3r123') {
         req.user.role = 'admin'

@@ -31,7 +31,16 @@ router.get('/', publicRoutes, async (req, res) => {
             }
             totalPages.push({ page: index, link })
         }
+
+        if (result.response.page > totalPages.length || result.response.page < 1 || /[a-z]/i.test(result.response.page)) {
+            console.log(result.response.page)
+            console.log(totalPages.length)
+            return res.render("pageError", {
+                error: 'La pagina que está buscando no existe!'
+            })
+        }
         const user = req.session.user
+
         res.render("home", {
             user,
             products: result.response.payload,
@@ -43,7 +52,9 @@ router.get('/', publicRoutes, async (req, res) => {
                 totalPages
             }
         })
-    } else {
+    }
+
+    else {
         console.log(result.response.error)
         res.status(result.statusCode).render("pageError")
     }
