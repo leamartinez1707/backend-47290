@@ -11,6 +11,8 @@ import viewsRouter from './routers/views.router.js'
 import sessionViewRouter from './routers/sessionView.router.js'
 import sessionRouter from './routers/session.router.js'
 
+import passport from 'passport'
+import initializePassport from './config/passport.config.js'
 
 const app = express();
 
@@ -27,6 +29,10 @@ app.use(session({
     saveUninitialized: true
 }))
 
+initializePassport()
+app.use(passport.initialize())
+app.use(passport.session())
+
 // Para cargar archivos en formato json con POST
 app.use(express.json())
 
@@ -41,7 +47,7 @@ app.use(express.static('./public'))
 app.use(express.urlencoded({ extended: true }))
 
 app.use('/', sessionViewRouter)
-app.use('/api/sessions', sessionRouter)
+app.use('/session', sessionRouter)
 app.use('/api/products', productRouter)
 app.use('/api/carts', cartsRouter)
 app.use('/products', viewsRouter)

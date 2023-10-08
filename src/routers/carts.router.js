@@ -120,19 +120,20 @@ router.post('/:cid/product/:pid', async (req, res) => {
         const pid = req.params.pid
         let cart = await cartModel.findById(cid).lean()
 
-        // let cart = await getProductsFromCart(cid)
-        // .populate('products.product').lean()
-
         if (cart === null) return res.status(404).json({ status: 'error', error: `Cart "${cid}" was not found` })
         let product = await productModel.findById(pid).lean()
         if (product === null) return res.status(404).json({ status: 'error', error: `Product "${pid}" was not found` })
         let quantity = req.params.quantity || 1
         product = { product, quantity }
-
+        console.log(product.quantity + 'prd quan')
         // if (quantity !== Number) return res.status(400).json({ status: 'error', error: 'Quantity is not a number' })
         if (quantity === null) return res.status(400).json({ status: 'error', error: 'Quantity is null' })
 
-        cart.products.push(product)
+        let productIndex = cart.products.findIndex(prd => prd._id === product._id)
+        console.log(cart.products[productIndex].quantity)
+        if (productIndex) {
+            cart.products[productIndex].quantity = quantity + 1
+        } else cart.products.push(product)
 
         const result = await cartModel.findByIdAndUpdate(cid, cart, { returnDocument: 'after' }).lean()
         // console.log(result)

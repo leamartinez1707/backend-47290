@@ -16,7 +16,9 @@ router.get('/profile', publicRoutes, (req, res) => {
 
     res.render('sessions/profile', req.session.user)
 
-    console.log(req.session.user)
+    // 
 })
+
+router.get('/session/failRegister', (req, res) => res.send({ error: 'Error failRegister' }))
 
 export default router

@@ -1,33 +1,33 @@
 import { Router } from "express";
-import UserModel from '../dao/models/user.model.js'
+import passport from "passport";
 
 const router = Router()
 
 
-router.post('/register', async (req, res) => {
+router.post('/register', passport.authenticate('register', { failureRedirect: '/session/failRegister' }), async (req, res) => {
 
-
-    let { first_name, last_name, email, age, password } = req.body
-    await UserModel.create({ first_name, last_name, email, age, password })
     res.redirect('/')
 
 })
 
-router.post('/login', async (req, res) => {
+router.post('/login', passport.authenticate('login', { failureRedirect: '/session/failRegister' }), async (req, res) => {
 
-    let { email, password } = req.body
-    const user = await UserModel.findOne({ email, password }).lean().exec()
-
-    if (!user) {
-        return res.redirect('/')
+    if (!req.user) {
+        return res.status(400).send({ status: 'error', error: 'Invalid credentials' })
     }
-    if (user.email === 'adminCoder@coder.com' || user.password === 'adminCod3r123') {
-        user.role = 'admin'
+    if (req.user.email === 'adminCoder@coder.com' || req.user.password === 'adminCod3r123') {
+        req.user.role = 'admin'
     } else {
-        user.role = 'user'
+        req.user.role = 'user'
     }
-    req.session.user = user
-    res.redirect('/')
+    req.session.user = {
+        first_name: req.user.first_name,
+        last_name: req.user.last_name,
+        email: req.user.email,
+        age: req.user.age,
+        role: req.user.role
+    }
+    res.redirect('/profile')
 })
 
 
@@ -41,7 +41,15 @@ router.get('/logout', (req, res) => {
     })
 })
 
+router.get('/gitCallback', passport.authenticate('github', { failureRedirect: '/login' }), async (req, res) => {
 
+    req.session.user = req.user
+    res.redirect('/')
+})
+
+router.get('/github', passport.authenticate('github', { scope: ['user:email'] }), (req, res) => {
+
+})
 
 
 
