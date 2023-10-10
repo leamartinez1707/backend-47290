@@ -6,6 +6,6 @@ export const publicRoutes = (req, res, next) => {
 
 export const privateRoutes = (req, res, next) => {
 
-    if (req.session.user) return res.redirect('/profile')
+    if (req.session.user) return res.redirect('/products')
     next()
 }

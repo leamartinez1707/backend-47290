@@ -19,4 +19,16 @@ router.get('/profile', publicRoutes, (req, res) => {
 
 router.get('/session/error', (req, res) => res.render('pageError'))
 
+router.get('/session/errorRegister', (req, res) => {
+    res.render('pageError', {
+        error: 'No se pudo registrar el usuario'
+    })
+})
+
+router.get('/session/errorLogin', (req, res) => {
+    res.render('pageError', {
+        error: 'Verifique que los datos del usuario sean correctos'
+    })
+})
+
 export default router

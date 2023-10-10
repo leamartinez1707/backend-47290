@@ -1,33 +1,39 @@
 import { Router } from "express";
 import passport from "passport";
 
+
 const router = Router()
 
 
-router.post('/register', passport.authenticate('register', { failureRedirect: '/session/error' }), async (req, res) => {
+router.post('/register', passport.authenticate('register', { failureRedirect: '/session/errorRegister' }), async (req, res) => {
 
     res.redirect('/')
 
 })
 
-router.post('/login', passport.authenticate('login', { failureRedirect: '/session/error' }), async (req, res) => {
-
+router.post('/login', passport.authenticate('login', { failureRedirect: '/session/errorLogin' }), async (req, res) => {
     if (!req.user) {
+        console.log(req.user)
         res.status(400).send({ status: 'error', error: error.message })
     }
-    if (req.user.email === 'adminCoder@coder.com' || req.user.password === 'adminCod3r123') {
-        req.user.role = 'admin'
+    if (req.user.email == 'adminCoder@coder.com') {
+        console.log(req.user)
+        req.session.user = {
+            email: req.user.email,
+            role: req.user.role
+        }
     } else {
-        req.user.role = 'user'
+        req.session.user = {
+            first_name: req.user.first_name,
+            last_name: req.user.last_name,
+            email: req.user.email,
+            age: req.user.age,
+            role: req.user.role
+        }
     }
-    req.session.user = {
-        first_name: req.user.first_name,
-        last_name: req.user.last_name,
-        email: req.user.email,
-        age: req.user.age,
-        role: req.user.role
-    }
-    res.redirect('/profile')
+
+    res.redirect('/products')
+
 })
 
 

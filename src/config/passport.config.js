@@ -3,7 +3,7 @@ import local from 'passport-local'
 import UserModel from "../dao/models/user.model.js";
 import GitHubStrategy from 'passport-github2'
 import { createHash, validatePassword } from "../utils/utils.js";
-
+import Swal from "sweetalert2";
 // Libreria 
 // Profesionalizando nuestro Login.
 
@@ -40,17 +40,25 @@ const initializePassport = () => {
         usernameField: 'email',
     }, async (username, password, done) => {
         try {
+            if (username == 'adminCoder@coder.com') {
+                const user = { email: username, role: 'admin' }
+                return done(null, user)
+            }
+            // && password == 'adminCod3r123'
             const user = await UserModel.findOne({ email: username })
             if (!user) {
-                return done(null, false)
+                console.log('falta user')
+                return done(null, 'false')
             }
             if (!validatePassword(user, password)) return done(null, false)
+            user.role = 'user'
             return done(null, user)
         } catch (err) {
             console.log(err.message + 'este es el error')
             return done(err.message)
         }
     }))
+
     passport.use('github', new GitHubStrategy({
         clientID: 'Iv1.311097ec463b4d35',
         clientSecret: 'e370926db53a61159edb07ad6e70bc0e4c6342b2',
