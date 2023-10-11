@@ -3,11 +3,14 @@ import local from 'passport-local'
 import UserModel from "../dao/models/user.model.js";
 import GitHubStrategy from 'passport-github2'
 import { createHash, validatePassword } from "../utils/utils.js";
-import Swal from "sweetalert2";
+
+
+
 // Libreria 
 // Profesionalizando nuestro Login.
 
 const localStrategy = local.Strategy
+
 
 
 const initializePassport = () => {
@@ -22,15 +25,15 @@ const initializePassport = () => {
         try {
             const user = await UserModel.findOne({ email: username })
             if (user) {
-                console.log(user + 'este es el user que ya existe')
+
                 return done(null, false)
             }
             const newUser = { first_name, last_name, email, age, password: createHash(password) }
-            console.log(newUser + 'este es el result creado')
+            console.log('user creado')
             const result = await UserModel.create(newUser)
             return done(null, result)
         } catch (err) {
-            console.log(err.message + 'este es el error')
+
             return done(err.message)
         }
 
@@ -40,21 +43,24 @@ const initializePassport = () => {
         usernameField: 'email',
     }, async (username, password, done) => {
         try {
-            if (username == 'adminCoder@coder.com') {
-                const user = { email: username, role: 'admin' }
-                return done(null, user)
+            if (username == 'adminCoder@coder.com' && password == 'adminCod3r123') {
+                const userAdmin = {
+                    email: username,
+                    role: 'admin',
+                    password: password,
+                    first_name: 'Admin',
+                }
+                return done(null, userAdmin)
             }
-            // && password == 'adminCod3r123'
             const user = await UserModel.findOne({ email: username })
             if (!user) {
-                console.log('falta user')
-                return done(null, 'false')
+
+                return done(null, false)
             }
             if (!validatePassword(user, password)) return done(null, false)
-            user.role = 'user'
+
             return done(null, user)
         } catch (err) {
-            console.log(err.message + 'este es el error')
             return done(err.message)
         }
     }))
@@ -64,7 +70,7 @@ const initializePassport = () => {
         clientSecret: 'e370926db53a61159edb07ad6e70bc0e4c6342b2',
         callbackUrl: 'http://localhost:8080/api/session/gitCallback'
     }, async (accessToken, refreshToken, profile, done) => {
-        console.log(profile)
+
         try {
             const user = await UserModel.findOne({ email: profile._json.email })
             if (user) return done(null, user)
@@ -81,13 +87,23 @@ const initializePassport = () => {
     }))
 
     passport.serializeUser((user, done) => {
-        done(null, user._id)
 
+        if (user.role == 'admin') {
+            done(null, user)
+        } else {
+            user.role = 'user'
+            done(null, user)
+        }
     })
 
-    passport.deserializeUser(async (id, done) => {
-        const user = await UserModel.findById(id)
-        done(null, user)
+    passport.deserializeUser(async (user, done) => {
+
+        if (user.role == 'admin') {
+            done(null, user)
+        } else {
+            const userFinal = await UserModel.findById(user._id)
+            done(null, userFinal)
+        }
     })
 
 

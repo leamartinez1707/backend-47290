@@ -1,26 +1,25 @@
 import { Router } from "express";
 import passport from "passport";
 
-
 const router = Router()
 
-
-router.post('/register', passport.authenticate('register', { failureRedirect: '/session/errorRegister' }), async (req, res) => {
-
-    res.redirect('/')
+router.post('/register', passport.authenticate('register', {
+    failureRedirect: '/session/errorRegister',
+    successRedirect: '/session/registerAccepted'
+}), async (req, res) => {
 
 })
 
 router.post('/login', passport.authenticate('login', { failureRedirect: '/session/errorLogin' }), async (req, res) => {
+
     if (!req.user) {
-        console.log(req.user)
         res.status(400).send({ status: 'error', error: error.message })
     }
     if (req.user.email == 'adminCoder@coder.com') {
-        console.log(req.user)
         req.session.user = {
             email: req.user.email,
-            role: req.user.role
+            role: req.user.role,
+            first_name: req.user.first_name
         }
     } else {
         req.session.user = {
@@ -47,7 +46,7 @@ router.get('/logout', (req, res) => {
     })
 })
 
-router.get('/gitCallback', passport.authenticate('github', { failureRedirect: '/login' }), async (req, res) => {
+router.get('/gitCallback', passport.authenticate('github', { failureRedirect: '/session/errorLogin' }), async (req, res) => {
 
     req.session.user = req.user
     res.redirect('/')
