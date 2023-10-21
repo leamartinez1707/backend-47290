@@ -12,8 +12,8 @@ router.get('/', privateRoutes, (req, res) => {
 router.get('/register', privateRoutes, async (req, res) => {
     res.render('sessions/register')
 })
-router.get('/profile', publicRoutes, (req, res) => {
-
+router.get('/current', publicRoutes, (req, res) => {
+    
     res.render('sessions/profile', req.session.user)
 })
 

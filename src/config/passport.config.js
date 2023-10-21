@@ -1,6 +1,7 @@
 import passport from "passport";
 import local from 'passport-local'
 import UserModel from "../dao/models/user.model.js";
+import cartModel from '../dao/models/cart.model.js'
 import GitHubStrategy from 'passport-github2'
 import { createHash, validatePassword } from "../utils/utils.js";
 
@@ -25,11 +26,12 @@ const initializePassport = () => {
         try {
             const user = await UserModel.findOne({ email: username })
             if (user) {
-
                 return done(null, false)
             }
-            const newUser = { first_name, last_name, email, age, password: createHash(password) }
-            console.log('user creado')
+
+            const newCart = await cartModel.create({})
+            const newUser = { first_name, last_name, email, age, cart: newCart._id, password: createHash(password) }
+
             const result = await UserModel.create(newUser)
             return done(null, result)
         } catch (err) {
@@ -74,11 +76,13 @@ const initializePassport = () => {
         try {
             const user = await UserModel.findOne({ email: profile._json.email })
             if (user) return done(null, user)
+            const newCart = await cartModel.create({})
             const newUser = await UserModel.create({
                 first_name: profile._json.name,
                 last_name: '',
                 email: profile._json.email,
-                password: ''
+                password: '',
+                cart: newCart._id
             })
             return done(null, newUser)
         } catch (err) {
@@ -91,7 +95,7 @@ const initializePassport = () => {
         if (user.role == 'admin') {
             done(null, user)
         } else {
-            user.role = 'user'
+            // user.role = 'user'
             done(null, user)
         }
     })

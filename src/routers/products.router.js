@@ -6,12 +6,21 @@ const router = Router()
 export const getProducts = async (req, res) => {
 
     try {
-        const limit = req.query.limit || 10
-        const page = req.query.page || 1
+
+        const { limit = 10, page = 1 } = req.query
+        // const limit = req.query.limit || 10
+        // const page = req.query.page || 1
         const pageFilters = {}
+
+        // if (req.query.category || req.query.stock) {
+        //     pageFilters.category = req.query.category
+        //     pageFilters.stock = req.query.stock
+        //     console.log(pageFilters)
+        // }
 
         if (req.query.category) pageFilters.category = req.query.category
         if (req.query.stock) pageFilters.stock = req.query.stock
+
 
         const paginateOpt = { lean: true, limit, page }
 
@@ -20,11 +29,10 @@ export const getProducts = async (req, res) => {
 
         const result = await productModel.paginate(pageFilters, paginateOpt)
 
-
         let previousLink
 
         if (req.query.page) {
-            
+
             const modifiedUrl = req.originalUrl.replace(`page=${req.query.page}`, `page=${result.prevPage}`)
             previousLink = `http://${req.hostname}:8080${modifiedUrl}`
         } else {

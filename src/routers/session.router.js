@@ -27,7 +27,8 @@ router.post('/login', passport.authenticate('login', { failureRedirect: '/sessio
             last_name: req.user.last_name,
             email: req.user.email,
             age: req.user.age,
-            role: req.user.role
+            role: req.user.role,
+            cart: req.user.cart
         }
     }
 
