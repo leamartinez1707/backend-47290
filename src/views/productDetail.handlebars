@@ -4,28 +4,28 @@
             <div class="w-full mb-8 md:w-1/2 md:mb-0">
                 <div class="sticky top-0 z-50 overflow-hidden ">
                     <div class="relative mb-6 lg:mb-10 lg:h-2/4 ">
-                        <img src="{{thumbnail}}" alt="" class="object-cover w-full lg:h-full ">
+                        <img src="{{product.thumbnail}}" alt="" class="object-cover w-full lg:h-full ">
                     </div>
                     <div class="flex-wrap hidden md:flex ">
                         <div class="w-1/2 p-2 sm:w-1/4">
                             <a href="#" class="block border border-transparent hover:border-red-300">
-                                <img src="{{thumbnail}}" alt="" class="object-cover w-full lg:h-full">
+                                <img src="{{product.thumbnail}}" alt="" class="object-cover w-full lg:h-full">
                             </a>
                         </div>
                         <div class="w-1/2 p-2 sm:w-1/4">
                             <a href="#" class="block border border-transparent hover:border-red-300">
-                                <img src="{{thumbnail}}" alt="" class="object-cover w-full lg:h-full">
+                                <img src="{{product.thumbnail}}" alt="" class="object-cover w-full lg:h-full">
                             </a>
                         </div>
                         <div class="w-1/2 p-2 sm:w-1/4">
                             <a href="#" class="block border border-transparent hover:border-red-300">
-                                <img src="{{thumbnail}}" alt="" class="object-cover w-full lg:h-full">
+                                <img src="{{product.thumbnail}}" alt="" class="object-cover w-full lg:h-full">
                             </a>
                         </div>
                         <div class="w-1/2 p-2 sm:w-1/4">
-                            <a href="{{thumbnail}}" target="_blank"
+                            <a href="{{product.thumbnail}}" target="_blank"
                                 class="block border border-transparent hover:border-red-300">
-                                <img src="{{thumbnail}}" alt="" class="object-cover w-full lg:h-full">
+                                <img src="{{product.Xthumbnail}}" alt="" class="object-cover w-full lg:h-full">
                             </a>
                         </div>
                     </div>
@@ -42,7 +42,8 @@
                             <h2 class="text-lg font-bold text-gray-900">Envío sin costo</h2>
                         </div>
                         <div class="mt-2 px-7">
-                            <a class="text-sm text-red-400 hover:text-red-800" href="#">Obtené los horarios de envíos</a>
+                            <a class="text-sm text-red-400 hover:text-red-800" href="#">Obtené los horarios de
+                                envíos</a>
                         </div>
                     </div>
                 </div>
@@ -50,15 +51,16 @@
             <div class="w-full px-4 md:w-1/2 ">
                 <div class="lg:pl-20">
                     <div class="mb-8 ">
+                        <label class="hidden" id="cart_id">{{user.cart}}</label>
                         <h2 class="max-w-xl mb-6 text-2xl font-bold dark:text-gray-800 md:text-4xl">
-                            {{title}}</h2>
+                            {{product.title}}</h2>
                         <p class="inline-block mb-6 text-4xl font-bold text-gray-800 dark:text-gray-800 ">
-                            <span>${{price}}</span>
+                            <span>${{product.price}}</span>
                             <span
-                                class="text-base font-normal text-gray-500 line-through dark:text-gray-500">${{price}}</span>
+                                class="text-base font-normal text-gray-500 line-through dark:text-gray-500">${{product.price}}</span>
                         </p>
                         <p class="max-w-md text-gray-700 dark:text-gray-800">
-                            {{description}}
+                            {{product.description}}
                         </p>
                     </div>
                     <div class="mb-8">
@@ -95,7 +97,7 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-4">
-                        <button onClick="addToCart('{{_id}}')"
+                        <button onClick="addToCart('{{product._id}}')"
                             class="w-full p-4 bg-red-500 rounded-md lg:w-2/5 dark:text-gray-200 text-gray-50 hover:bg-red-600 dark:bg-red-500 dark:hover:bg-red-700">
                             Agregar al carrito</button>
                         <button
@@ -119,20 +121,13 @@
     }
     function addToCart(pid) {
 
-        fetch('/api/carts', {
+        let cart_id = document.getElementById('cart_id').innerHTML
+        fetch(`/api/carts/${cart_id}/product/${pid}`, {
             method: 'post'
         })
             .then(result => result.json())
             .then(result => {
-                if (result.status === 'error') throw new Error(result.error)
-                return result.payload._id
-            })
-            .then(cid =>
-                fetch(`/api/carts/${cid}/product/${pid}`, {
-                    method: 'post'
-                }))
-            .then(result => result.json())
-            .then(result => {
+
                 if (result.status === 'error') throw new Error(result.error)
                 swalAdded()
             })

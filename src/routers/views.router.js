@@ -64,10 +64,14 @@ router.get('/', publicRoutes, async (req, res) => {
 router.get('/product/:pid', publicRoutes, async (req, res) => {
     try {
         let pid = req.params.pid
-
-        let product = await productModel.findById(pid)
+        const user = req.session.user
+        let product = await productModel.findById(pid).lean()
         if (product === null) return res.status(404).render("pageError")
-        res.status(200).render("productDetail", product)
+        res.status(200).render("productDetail", {
+            product,
+            user
+        })
+
     } catch (err) {
         console.log('Error /pid')
         res.status(500).render("pageError", {

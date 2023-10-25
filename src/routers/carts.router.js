@@ -127,8 +127,6 @@ router.post('/:cid/product/:pid', async (req, res) => {
 
         if (quantity === null) res.status(400).json({ status: 'error', error: 'Quantity is null' })
         let productIndex = cart.products.findIndex(prd => prd.product._id == pid)
-        console.log(cart.products[productIndex])
-        console.log(productIndex)
         if (productIndex < 0) {
             cart.products.push(product)
         } else {
