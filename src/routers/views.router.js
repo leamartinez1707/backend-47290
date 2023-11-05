@@ -1,6 +1,6 @@
 import { Router } from "express";
+import cartControl from "../controllers/cartControl.js";
 import { getProducts } from "./products.router.js";
-import { getProductsFromCart } from '../routers/carts.router.js'
 import { productModel } from "../dao/models/product.model.js";
 import { publicRoutes } from "../middlewares/auth.middlewares.js"
 
@@ -87,7 +87,8 @@ router.get('/realtimeproducts', publicRoutes, (req, res) => {
 router.get('/:cid', publicRoutes, async (req, res) => {
 
 
-    let cart = await getProductsFromCart(req, res)
+    // let cart = await getProductsFromCart(req, res)
+    let cart = await cartControl.getProductsFromCart()
 
     if (cart.statusCode === 200) {
         res.status(cart.statusCode).render("cart", {
