@@ -18,4 +18,14 @@ export default class CartService {
     createC = async () => {
         return await this.cartDAO.createCart()
     }
+    addProductTC = async (cid, pid) => {
+        return await this.cartDAO.addProductToCart(cid, pid)
+    }
+    deleteProductFCService = async (cid, pid) => {
+        return await this.cartDAO.deleteProductFromCart(cid, pid)
+    }
+    updateProductFCService = async (cid, pid, data) => {
+        return await this.cartDAO.updateProductFromCart(cid, pid, data)
+
+    }
 }

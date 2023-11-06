@@ -10,6 +10,7 @@ import cartsRouter from './routers/carts.router.js'
 import viewsRouter from './routers/views.router.js'
 import sessionViewRouter from './routers/sessionView.router.js'
 import sessionRouter from './routers/session.router.js'
+import config from './config/config.js'
 
 import passport from 'passport'
 import initializePassport from './config/passport.config.js'
@@ -21,10 +22,10 @@ const MONGO_DB = 'ecommerce'
 
 app.use(session({
     store: MongoStore.create({
-        mongoUrl: MONGO_URL,
-        dbName: MONGO_DB
+        mongoUrl: config.mongo_url,
+        dbName: config.mongo_db_name
     }),
-    secret: 'secreto',
+    secret: config.secretPass,
     resave: true,
     saveUninitialized: true
 }))
@@ -53,14 +54,11 @@ app.use('/api/carts', cartsRouter)
 app.use('/products', viewsRouter)
 app.use('/carts', viewsRouter)
 
-
-
-
 try {
 
     // Conexion a la base de datos de Mongoose
-    await mongoose.connect(MONGO_URL, {
-        dbName: MONGO_DB
+    await mongoose.connect(config.mongo_url, {
+        dbName: config.mongo_db_name
     })
     console.log('Conectado a la DB')
 

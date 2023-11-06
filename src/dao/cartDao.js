@@ -27,14 +27,13 @@ export default class CartDao {
             return {
                 statusCode: 500,
                 response: {
-                    status: 'error', error: error.message
+                    status: 'error', error: 'Cart was not found'
                 }
             }
         }
     }
 
     getProductsFromCart = async (cid) => {
-
         let result = await this.getProductsFromCartId(cid)
         return result
     }
@@ -143,11 +142,12 @@ export default class CartDao {
             // MODIFICO LOS PRODUCTOS ANTERIORES POR LOS NUEVOS PRODUCTOS
             cart.products = newCart.products;
 
-            const result = await this.model.findByIdAndUpdate(cid, cart, { Document: 'after' })
+            await this.model.findByIdAndUpdate(cid, cart, { Document: 'after' })
+            cart = await this.model.findById(cid)
             return {
                 statusCode: 200,
                 response: {
-                    status: 'success', payload: result
+                    status: 'success', payload: cart
                 }
             }
             // res.status(200).json({ status: 'success', payload: result })
@@ -167,7 +167,7 @@ export default class CartDao {
         try {
             const result = await this.model.create({})
             return {
-                statusCode: 200,
+                statusCode: 201,
                 response: {
                     status: 'success', payload: result
                 }
@@ -182,102 +182,159 @@ export default class CartDao {
         }
     }
 
-    addProductToCart = async () => {
+    addProductToCart = async (cid, pid) => {
         try {
-            const cid = req.params.cid
-            const pid = req.params.pid
+
             let cart = await this.model.findById(cid).lean()
 
-            if (cart === null) return res.status(404).json({ status: 'error', error: `Cart "${cid}" was not found` })
+            if (cart === null) return {
+                statusCode: 400,
+                response: {
+                    status: 'error', error: `Cart "${cid}" was not found`
+                }
+            }
             let product = await this.modelProduct.findById(pid).lean()
-            if (product === null) return res.status(404).json({ status: 'error', error: `Product "${pid}" was not found` })
-            let quantity = req.params.quantity || 1
+
+            if (product === null) return {
+                statusCode: 400,
+                response: { status: 'error', error: `Product "${pid}" was not found` }
+            }
+
+            let quantity = 1
             product = { product, quantity }
 
-            if (quantity === null) return res.status(400).json({ status: 'error', error: 'Quantity is null' })
+            if (quantity === null) return {
+                statusCode: 400,
+                response: { status: 'error', error: 'Quantity is null' }
+            }
             let productIndex = cart.products.findIndex(prd => prd.product._id == pid)
             if (productIndex < 0) {
                 cart.products.push(product)
             } else {
                 cart.products[productIndex].quantity++
             }
-            const result = await this.model.findByIdAndUpdate(cid, cart, { Document: 'after' }).lean()
-            return res.status(201).json({ status: 'success', payload: result })
+            await this.model.findByIdAndUpdate(cid, cart, { Document: 'after' }).lean()
+            cart = await this.model.findById(cid).lean()
+            return {
+                statusCode: 201,
+                response: { status: 'success', payload: cart }
+            }
 
         } catch (err) {
-            return res.status(500).json({ status: 'error', payload: err.message })
+            return {
+                statusCode: 500,
+                response: { status: 'error', payload: err.message }
+            }
         }
     }
 
-    deleteProductFromCart = async () => {
+    deleteProductFromCart = async (cid, pid) => {
         try {
-            const cid = req.params.cid
-            const pid = req.params.pid
 
             // BUSCAR EL CARRITO CON EL ID QUE SE LE PASO POR PARAMETRO
             let cart = await this.model.findById(cid).lean()
 
-            if (cart === null) return res.status(404).json({ status: 'error', error: `Cart "${cid}" was not found` })
+            if (cart === null) return {
+                statusCode: 400,
+                response: { status: 'error', error: `Cart "${cid}" was not found` }
+            }
 
             // BUSCAR EL PRODUCTO QUE CONTENGA EL ID QUE SE LE PASO POR PARAMETRO
             let product = await this.modelProduct.findById(pid).lean()
 
-            if (product === null) return res.status(404).json({ status: 'error', error: `Product "${pid}" was not found` })
+            if (product === null) return {
+                statusCode: 400,
+                response: { status: 'error', error: `Product "${pid}" was not found` }
+            }
 
             // ---> CREAR UNA VERIFICACION DONDE SI EL PRODUCTO NO ES ENCONTRADO DE UN ERROR
 
             // FILTRAR LOS PRODUCTOS DEL CARRITO Y ELIMINAR EL PRODUCTO OBTENIDO ANTERIORMENTE
             cart.products = cart.products.filter(prd => prd.product.toString() !== pid)
 
-            if (!cart.products) return res.status(404).json({ status: 'error', error: `Product "${pid}" in cart ${cid} was not found` })
+            if (!cart.products) return {
+                statusCode: 400,
+                response: { status: 'error', error: `Product "${pid}" in cart ${cid} was not found` }
+            }
 
             // ACTUALIZAR EL CARRITO EN LA BASE DE DATOS, SIN EL PRODUCTO ANTERIORMENTE BORRADO
-            const result = await this.model.findByIdAndUpdate(cid, cart, { Document: 'after' }).lean()
-
-            return res.status(200).json({ status: 'success', payload: result })
+            await this.model.findByIdAndUpdate(cid, cart, { Document: 'after' }).lean()
+            cart = await this.model.findById(cid).lean()
+            return {
+                statusCode: 200,
+                response: { status: 'success', payload: cart }
+            }
 
         } catch (err) {
-            return res.status(500).json({ status: 'error', payload: err.message })
+            return {
+                statusCode: 500,
+                response: { status: 'error', payload: err.message }
+            }
         }
     }
 
-    updateProductFromCart = async () => {
+    updateProductFromCart = async (cid, pid, data) => {
         try {
-            const cid = req.params.cid
-            const pid = req.params.pid
-
             // BUSCAR EL CARRITO CON EL ID QUE SE LE PASO POR PARAMETRO
-            const cart = await this.model.findById(cid)
-            console.log(cart + 'error en el carrito')
+            let cart = await this.model.findById(cid)
+
             if (cart === null) {
-                return res.status(404).json({ status: 'error', error: `Cart "${cid}" was not found` })
+                return {
+                    statusCode: 400,
+                    response: { status: 'error', error: `Cart "${cid}" was not found` }
+                }
             }
-            // ---> CREAR UNA VERIFICACION DONDE SI EL PRODUCTO NO ES ENCONTRADO DE UN ERROR
+            // ---> CREAR UNA VERIFICACION DONDE SI EL PRODUCTO NO ES ENCONTRADO, EMITA UN ERROR
 
             let productTest = await this.modelProduct.findById(pid)
-
-            if (!productTest) return res.status(404).json({ status: 'error', error: `Product with ID "${pid}" was not found` })
+            console.log(productTest._id)
+            if (!productTest) return {
+                statusCode: 400,
+                response: { status: 'error', error: `Product with ID "${pid}" was not found` }
+            }
             let productUpdate = cart.products.findIndex(prd => prd.product.toString() === pid)
 
-            if (productUpdate < 0) return res.status(404).json({ status: 'error', error: `Product "${pid}" in cart ${cid} was not found` })
+            if (productUpdate < 0) return {
+                statusCode: 400,
+                response: { status: 'error', error: `Product "${pid}" in cart ${cid} was not found` }
+            }
 
             console.log(productUpdate + 'index del producto ')
-            let newQuantity = req.body.quantity
+            let newQuantity = data
 
-            if (newQuantity === 0) return res.status(400).json({ status: 'error', error: 'Quantity value cant be 0' })
-            if (!newQuantity) return res.status(400).json({ status: 'error', error: 'Quantity value is a required field' })
-            if (typeof newQuantity !== 'number') return res.status(400).json({ status: 'error', error: 'Quantity must be a number' })
-
-            console.log(newQuantity)
+            if (newQuantity === 0) return {
+                statusCode: 400,
+                response: { status: 'error', error: 'Quantity value cant be 0' }
+            }
+            if (!newQuantity) return {
+                statusCode: 400,
+                response: { status: 'error', error: 'Quantity value is a required field' }
+            }
+            if (typeof newQuantity !== 'number') return {
+                statusCode: 400,
+                response: { status: 'error', error: 'Quantity must be a number' }
+            }
+            console.log(cart.products[productUpdate])
             cart.products[productUpdate].quantity = newQuantity
 
             // ACTUALIZAR EL CARRITO EN LA BASE DE DATOS, SIN EL PRODUCTO ANTERIORMENTE BORRADO
-            const result = await this.model.findByIdAndUpdate(cid, cart, { Document: 'after' }).lean()
-            if (!result) return res.status(404).json({ status: 'error', error: 'Cart could not be updated' })
-            return res.status(200).json({ status: 'success', payload: result })
+            let result = await this.model.findByIdAndUpdate(cid, cart, { Document: 'after' }).lean()
+            cart = await this.model.findById(cid)
+            if (!result) return {
+                statusCode: 400,
+                response: { status: 'error', error: 'Cart could not be updated' }
+            }
+            else return {
+                statusCode: 200,
+                response: { status: 'success', payload: cart }
+            }
 
         } catch (err) {
-            return res.status(500).json({ status: 'error', payload: err.message })
+            return {
+                statusCode: 500,
+                response: { status: 'error', payload: err.message }
+            }
         }
+
     }
 }
