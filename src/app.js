@@ -17,9 +17,6 @@ import initializePassport from './config/passport.config.js'
 
 const app = express();
 
-const MONGO_URL = 'mongodb+srv://leamartinez1707:leandro1707@elemcluster.qnq63c2.mongodb.net'
-const MONGO_DB = 'ecommerce'
-
 app.use(session({
     store: MongoStore.create({
         mongoUrl: config.mongo_url,

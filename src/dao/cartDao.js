@@ -287,7 +287,7 @@ export default class CartDao {
             // ---> CREAR UNA VERIFICACION DONDE SI EL PRODUCTO NO ES ENCONTRADO, EMITA UN ERROR
 
             let productTest = await this.modelProduct.findById(pid)
-            console.log(productTest._id)
+            
             if (!productTest) return {
                 statusCode: 400,
                 response: { status: 'error', error: `Product with ID "${pid}" was not found` }
@@ -299,7 +299,7 @@ export default class CartDao {
                 response: { status: 'error', error: `Product "${pid}" in cart ${cid} was not found` }
             }
 
-            console.log(productUpdate + 'index del producto ')
+            
             let newQuantity = data
 
             if (newQuantity === 0) return {
@@ -314,7 +314,7 @@ export default class CartDao {
                 statusCode: 400,
                 response: { status: 'error', error: 'Quantity must be a number' }
             }
-            console.log(cart.products[productUpdate])
+            
             cart.products[productUpdate].quantity = newQuantity
 
             // ACTUALIZAR EL CARRITO EN LA BASE DE DATOS, SIN EL PRODUCTO ANTERIORMENTE BORRADO

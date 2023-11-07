@@ -4,6 +4,7 @@ import UserModel from "../dao/models/user.model.js";
 import cartModel from '../dao/models/cart.model.js'
 import GitHubStrategy from 'passport-github2'
 import { createHash, validatePassword } from "../utils/utils.js";
+import config from '../config/config.js'
 
 
 
@@ -45,7 +46,7 @@ const initializePassport = () => {
         usernameField: 'email',
     }, async (username, password, done) => {
         try {
-            if (username == 'adminCoder@coder.com' && password == 'adminCod3r123') {
+            if (username == config.admin_email && password == config.admin_password) {
                 const userAdmin = {
                     email: username,
                     role: 'admin',

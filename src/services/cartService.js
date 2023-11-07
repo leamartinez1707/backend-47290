@@ -6,25 +6,25 @@ export default class CartService {
         this.cartDAO = new CartDao()
     }
 
-    getPFC = async (cid) => {
+    getProductsFromCartService = async (cid) => {
         return await this.cartDAO.getProductsFromCart(cid)
     }
-    deleteC = async (cid) => {
+    deleteCartService = async (cid) => {
         return await this.cartDAO.deleteCart(cid)
     }
-    updateC = async (cid) => {
+    updateCartService = async (cid) => {
         return await this.cartDAO.updateCart(cid)
     }
-    createC = async () => {
+    createCartService = async () => {
         return await this.cartDAO.createCart()
     }
-    addProductTC = async (cid, pid) => {
+    addProductToCartService = async (cid, pid) => {
         return await this.cartDAO.addProductToCart(cid, pid)
     }
-    deleteProductFCService = async (cid, pid) => {
+    deleteProductFromCartService = async (cid, pid) => {
         return await this.cartDAO.deleteProductFromCart(cid, pid)
     }
-    updateProductFCService = async (cid, pid, data) => {
+    updateProductFromCartService = async (cid, pid, data) => {
         return await this.cartDAO.updateProductFromCart(cid, pid, data)
 
     }
