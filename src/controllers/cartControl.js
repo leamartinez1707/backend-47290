@@ -93,7 +93,7 @@ const purchaseCartController = async (req, res) => {
                 productToBuy.stock -= purchaseCart.products[index].quantity
                 await ProductService.update(productToBuy._id, productToBuy)
                 // Eliminamos del carrito todos los productos que se compraron y dejamos los que no tenian stock
-                productsAfterPurchase = productsAfterPurchase.products.filter(prds => prds.product.toString() !== purchaseCart.products[index].product.toString())
+                productsAfterPurchase = productsAfterPurchase.filter(prds => prds.product.toString() !== purchaseCart.products[index].product.toString())
                 console.log(productsAfterPurchase)
                 // Calculamos el precio total de los productos, segun la cantidad comprada
                 amount += (purchaseCart.products[index].quantity * productToBuy.price)
