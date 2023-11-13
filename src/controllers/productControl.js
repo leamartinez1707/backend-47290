@@ -1,6 +1,4 @@
-import ProductService from "../services/productService.js";
-
-const productService = new ProductService()
+import { ProductService } from '../services/index.js'
 
 const getProducts = async (req, res) => {
 
@@ -17,7 +15,8 @@ const getProducts = async (req, res) => {
     if (req.query.sort === 'des') paginateOpt.sort = { price: -1 }
 
     // let result = await productService.getProductsService()
-    const result = await productService.productDAO.model.paginate(pageFilters, paginateOpt)
+    // const result = await productService.productDAO.model.paginate(pageFilters, paginateOpt)
+    const result = await ProductService.dao.model.paginate(pageFilters, paginateOpt)
 
     if (!result) return {
         statusCode: 500,
@@ -64,7 +63,7 @@ const getProducts = async (req, res) => {
 
 const getProductByIdController = async (req, res) => {
     const pid = req.params.pid
-    const result = await productService.getProductByIdService(pid)
+    const result = await ProductService.getById(pid)
     if (result.statusCode === 500 || result.statusCode === 400) {
         return res.status(result.statusCode).send(result.response.error)
     }
@@ -73,7 +72,7 @@ const getProductByIdController = async (req, res) => {
 const addProductController = async (req, res) => {
     let { title, description, price, code, category, stock, thumbnail } = req.body
     const product = { title, description, price, code, category, stock, thumbnail }
-    const result = await productService.addProductService(product)
+    const result = await ProductService.create(product)
     if (result.statusCode === 500) {
         return res.status(result.statusCode).send(result.response.error)
     }
@@ -82,7 +81,7 @@ const addProductController = async (req, res) => {
 const updateProductController = async (req, res) => {
     const pid = req.params.pid
     const productToUpdate = req.body
-    const result = await productService.updateProductService(pid, productToUpdate)
+    const result = await ProductService.update(pid, productToUpdate)
     if (result.statusCode === 500) {
         return res.status(result.statusCode).send(result.response.error)
     }
@@ -90,7 +89,7 @@ const updateProductController = async (req, res) => {
 }
 const deleteProductController = async (req, res) => {
     const pid = req.params.pid
-    const result = await productService.deleteProductService(pid)
+    const result = await ProductService.delete(pid)
     if (result.statusCode === 500) {
         return res.status(result.statusCode).send(result.response.error)
     }

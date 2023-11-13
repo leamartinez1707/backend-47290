@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { privateRoutes, publicRoutes } from "../middlewares/auth.middlewares.js";
+import viewControl from "../controllers/viewControl.js";
+
 
 const router = Router()
 
@@ -12,10 +14,7 @@ router.get('/', privateRoutes, (req, res) => {
 router.get('/register', privateRoutes, async (req, res) => {
     res.render('sessions/register')
 })
-router.get('/current', publicRoutes, (req, res) => {
-    
-    res.render('sessions/profile', req.session.user)
-})
+router.get('/current', publicRoutes, viewControl.getSessionUser)
 
 router.get('/session/error', (req, res) => res.render('pageError'))
 

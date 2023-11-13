@@ -11,6 +11,7 @@ export default class CartDao {
         try {
             // const cid = req.params.cid
             let cart = await this.model.findById(cid).populate('products.product').lean()
+            
             if (!cart) {
                 return {
                     statusCode: 404, response: {
@@ -33,12 +34,12 @@ export default class CartDao {
         }
     }
 
-    getProductsFromCart = async (cid) => {
+    getAll = async (cid) => {
         let result = await this.getProductsFromCartId(cid)
         return result
     }
 
-    deleteCart = async (cid) => {
+    delete = async (cid) => {
 
         try {
             // BUSCAR EL CARRITO CON EL ID QUE SE LE PASO POR PARAMETRO
@@ -73,7 +74,7 @@ export default class CartDao {
         }
     }
 
-    updateCart = async (cid) => {
+    update = async (cid, data) => {
 
         // Deberá actualizar el carrito con un arreglo de productos con el formato especificado arriba.
         try {
@@ -89,19 +90,19 @@ export default class CartDao {
                 // return res.status(404).json({ status: 'error', error: `Cart "${cid}" was not found` })
             }
             // CREAR UN NUEVO BODY DEL CARRITO CON LOS PARAMETROS PASADOS EN BODY
-            let newCart = req.body
+            let newCart = data
 
             // VALIDA SI EXISTE EL ARRAY DE PRODUCTOS NUEVO PASADO POR BODY
-            if (!newCart.products) return {
+            if (!newCart) return {
                 statusCode: 400,
                 response: {
-                    status: 'error', error: 'Field products is required'
+                    status: 'error', error: 'Products is required'
                 }
             }
             // res.status(400).json({ status: 'error', error: 'Field products is required' })
 
             // VALIDACIONES PARA VERIFICAR SI LOS DATOS DEL BODY SON CORRECTOS
-            for (const prd of newCart.products) {
+            for (const prd of newCart) {
 
                 if (!prd.hasOwnProperty('product') || !prd.hasOwnProperty('quantity')) return {
                     statusCode: 400,
@@ -140,7 +141,7 @@ export default class CartDao {
                 // }
             }
             // MODIFICO LOS PRODUCTOS ANTERIORES POR LOS NUEVOS PRODUCTOS
-            cart.products = newCart.products;
+            cart.products = newCart
 
             await this.model.findByIdAndUpdate(cid, cart, { Document: 'after' })
             cart = await this.model.findById(cid)
@@ -163,7 +164,7 @@ export default class CartDao {
         }
     }
 
-    createCart = async () => {
+    create = async () => {
         try {
             const result = await this.model.create({})
             return {
@@ -287,7 +288,7 @@ export default class CartDao {
             // ---> CREAR UNA VERIFICACION DONDE SI EL PRODUCTO NO ES ENCONTRADO, EMITA UN ERROR
 
             let productTest = await this.modelProduct.findById(pid)
-            
+
             if (!productTest) return {
                 statusCode: 400,
                 response: { status: 'error', error: `Product with ID "${pid}" was not found` }
@@ -299,7 +300,7 @@ export default class CartDao {
                 response: { status: 'error', error: `Product "${pid}" in cart ${cid} was not found` }
             }
 
-            
+
             let newQuantity = data
 
             if (newQuantity === 0) return {
@@ -314,7 +315,7 @@ export default class CartDao {
                 statusCode: 400,
                 response: { status: 'error', error: 'Quantity must be a number' }
             }
-            
+
             cart.products[productUpdate].quantity = newQuantity
 
             // ACTUALIZAR EL CARRITO EN LA BASE DE DATOS, SIN EL PRODUCTO ANTERIORMENTE BORRADO

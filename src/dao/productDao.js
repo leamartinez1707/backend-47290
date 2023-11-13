@@ -7,15 +7,15 @@ export default class ProductDao {
         this.model = productModel
     }
 
-    getProducts = async () => {
+    getAll = async () => {
 
         try {
 
-            const paginate = productModel.find()
+            const result = await this.model.find().lean()
             return {
                 statusCode: 200,
                 response: {
-                    status: 'success', payload: paginate
+                    status: 'success', payload: result
                 }
             }
 
@@ -28,15 +28,11 @@ export default class ProductDao {
             }
         }
     }
-    getProductsDAO = async () => {
-        let result = await this.getProducts()
-        return result
-    }
-    getProductByIdDAO = async (pid) => {
+    getById = async (pid) => {
 
         try {
-            const result = await productModel.findOne({ _id: pid }).lean()
-            
+            const result = await this.model.findOne({ _id: pid }).lean()
+
             if (!result || result === null) return {
                 statusCode: 404,
                 response: { status: 'error', error: 'Product does not exists' }
@@ -53,10 +49,10 @@ export default class ProductDao {
             }
         }
     }
-    addProductDAO = async (product) => {
+    create = async (product) => {
 
         try {
-            let result = await productModel.create(product)
+            let result = await this.model.create(product)
             if (!result) return {
                 statusCode: 400,
                 response: { status: 'error', error: 'The product could not be added' }
@@ -73,14 +69,14 @@ export default class ProductDao {
         }
 
     }
-    updateProductDAO = async (pid, productToUpdate) => {
+    update = async (pid, productToUpdate) => {
         try {
             if (!productToUpdate.title || !productToUpdate.description || !productToUpdate.price || !productToUpdate.code || !productToUpdate.category || !productToUpdate.stock || !productToUpdate.thumbnail)
                 return {
                     statusCode: 400,
                     response: { status: 'error', error: 'Incomplete values' }
                 }
-            let result = await productModel.updateOne({ _id: pid }, productToUpdate)
+            let result = await this.model.updateOne({ _id: pid }, productToUpdate)
             if (!result) return {
                 statusCode: 400,
                 response: { status: 'error', error: 'The product could not be updated' }
@@ -97,9 +93,9 @@ export default class ProductDao {
         }
 
     }
-    deleteProductDAO = async (pid) => {
+    delete = async (pid) => {
         try {
-            let result = await productModel.deleteOne({ _id: pid })
+            let result = await this.model.deleteOne({ _id: pid })
             if (!result) return {
                 statusCode: 400,
                 response: { status: 'error', error: 'The product could not be deleted' }

@@ -20,3 +20,27 @@ mongoose.set("strictQuery", false)
 const userModel = mongoose.model(userCollection, userSchema);
 
 export default userModel
+
+
+// let Schema = mongoose.Schema
+
+// export default class User {
+//     static get model() {
+//         return 'users'
+//     }
+
+//     static get schema() {
+//         return {
+//             first_name: String,
+//             last_name: String,
+//             email: String,
+//             age: Number,
+//             password: String,
+//             cart: {
+//                 type: mongoose.Schema.Types.ObjectId,
+//                 ref: "carts"
+//             },
+//             role: { type: String, default: 'user' }
+//         }
+//     }
+// }

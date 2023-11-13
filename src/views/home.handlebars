@@ -87,15 +87,22 @@
             icon: "success"
         })
     }
+    function swalPermission() {
+        Swal.fire({
+            title: `Error de permisos`,
+            text: "No tiene permisos para realizar esta acción",
+            icon: "warning"
+        })
+    }
     function addToCart(pid) {
 
         let cart_id = document.getElementById('cart_id').innerHTML
+        if(!cart_id) return swalPermission()
         fetch(`/api/carts/${cart_id}/product/${pid}`, {
             method: 'post'
         })
             .then(result => result.json())
             .then(result => {
-
                 if (result.status === 'error') throw new Error(result.error)
                 swalAdded()
             })

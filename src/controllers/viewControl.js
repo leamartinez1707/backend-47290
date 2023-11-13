@@ -1,9 +1,6 @@
-import ProductService from "../services/productService.js"
-import CartService from '../services/cartService.js'
+import { CartService, ProductService } from '../services/index.js'
+import UserDTO from "../dto/userDTO.js"
 
-
-const productService = new ProductService()
-const cartService = new CartService()
 
 const getProductsViewController = async (req, res) => {
 
@@ -19,8 +16,8 @@ const getProductsViewController = async (req, res) => {
     if (req.query.sort === 'asc') paginateOpt.sort = { price: 1 }
     if (req.query.sort === 'des') paginateOpt.sort = { price: -1 }
 
-    // let result = await productService.getProductsService()
-    const result = await productService.productDAO.model.paginate(pageFilters, paginateOpt)
+    // let result = await ProductService.getProductsService()
+    const result = await ProductService.dao.model.paginate(pageFilters, paginateOpt)
 
     if (!result) return res.render("pageError", {
         error: 'La pagina que está buscando no existe!'
@@ -93,7 +90,7 @@ const getProductByIdViewController = async (req, res) => {
 
     const pid = req.params.pid
     const user = req.session.user
-    const product = await productService.getProductByIdService(pid)
+    const product = await ProductService.getById(pid)
 
     if (product === null) return res.status(404).render("pageError", {
         error: 'No pudimos encontrar el producto con este ID!!'
@@ -106,7 +103,7 @@ const getProductByIdViewController = async (req, res) => {
 const getProductsFromCartViewController = async (req, res) => {
 
     const cid = req.params.cid
-    const cartProducts = await cartService.getProductsFromCartService(cid)
+    const cartProducts = await CartService.getAll(cid)
     if (cartProducts === null) return res.status(cartProducts.statusCode).render("pageError", {
         error: 'No pudimos encontrar el carrito con este ID!!'
     })
@@ -115,4 +112,10 @@ const getProductsFromCartViewController = async (req, res) => {
         cartId: cartProducts.response.payload._id
     })
 }
-export default { getProductsViewController, getProductByIdViewController, getProductsFromCartViewController }
+const getSessionUser = async (req, res) => {
+
+    let user = req.session.user
+    user = new UserDTO(user)
+    res.render('sessions/profile', user)
+}
+export default { getProductsViewController, getProductByIdViewController, getProductsFromCartViewController, getSessionUser }
