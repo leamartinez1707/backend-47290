@@ -66,7 +66,7 @@ const updateProductFromCartController = async (req, res) => {
     const result = await CartService.updateProductFromCartService(cid, pid, data)
     if (result.statusCode === 500) {
         return res.status(result.statusCode).send(result.response.error)
-    }
+    } 
     res.status(result.statusCode).send(result.response)
 }
 
