@@ -66,7 +66,7 @@ const updateProductFromCartController = async (req, res) => {
     const result = await CartService.updateProductFromCartService(cid, pid, data)
     if (result.statusCode === 500) {
         return res.status(result.statusCode).send(result.response.error)
-    } 
+    }
     res.status(result.statusCode).send(result.response)
 }
 
@@ -79,7 +79,6 @@ const purchaseCartController = async (req, res) => {
         }
         const purchaseCart = resultCart.response.payload
         let productsAfterPurchase = purchaseCart.products
-        console.log(productsAfterPurchase)
         let productsToTicket = []
         let amount = 0
 
@@ -88,21 +87,23 @@ const purchaseCartController = async (req, res) => {
             let productToBuy = await ProductService.getById(purchaseCart.products[index].product)
             productToBuy = productToBuy.response.payload
             if (purchaseCart.products[index].quantity <= productToBuy.stock) {
+
                 // Se verifica si la cantidad del producto a comprar es igual o menor al stock del producto
                 // Se actualiza el stock del producto a comprar
                 productToBuy.stock -= purchaseCart.products[index].quantity
                 await ProductService.update(productToBuy._id, productToBuy)
                 // Eliminamos del carrito todos los productos que se compraron y dejamos los que no tenian stock
-                productsAfterPurchase = productsAfterPurchase.filter(prds => prds.product.toString() !== purchaseCart.products[index].product.toString())
-                console.log(productsAfterPurchase)
+                productsAfterPurchase = productsAfterPurchase.filter((prds) => prds.product._id.toString() !== purchaseCart.products[index].product._id.toString())
                 // Calculamos el precio total de los productos, segun la cantidad comprada
                 amount += (purchaseCart.products[index].quantity * productToBuy.price)
                 // Agregamos el producto all Array del ticket
                 productsToTicket.push({ product: productToBuy._id, price: productToBuy.price, quantity: purchaseCart.products[index].quantity })
+
             }
         }
         // Eliminamos los productos comprados, en MongoDB
-        await CartService.update(cid, { products: productsAfterPurchase }, { returnDocument: 'after' })
+        if (productsToTicket.length === 0) return res.status(400).render('pageError', { error: 'Su carrito de compra está vacio' })
+        await CartService.update(cid, productsAfterPurchase, { returnDocument: 'after' })
         // Creamos el ticket de compra
         const ticket = await ticketModel.create({
             code: nanoid(),
@@ -110,7 +111,14 @@ const purchaseCartController = async (req, res) => {
             amount,
             purchaser: req.session.user.email
         })
-        return res.status(201).send(ticket)
+
+        return res.status(201).render('checkoutRes', {
+            purchaseCode: ticket.code,
+            purchaseProducts: ticket.products.map(prd => prd.toJSON()),
+            purchaseAmount: ticket.amount,
+            purchaseBuyer: ticket.purchaser,
+            purchaseSubTotal: ticket.amount * 0.8
+        })
     } catch (error) {
         return res.status(500).send(error.message)
     }

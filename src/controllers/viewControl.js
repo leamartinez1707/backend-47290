@@ -104,6 +104,7 @@ const getProductsFromCartViewController = async (req, res) => {
 
     const cid = req.params.cid
     const cartProducts = await CartService.getAll(cid)
+    
     if (cartProducts === null) return res.status(cartProducts.statusCode).render("pageError", {
         error: 'No pudimos encontrar el carrito con este ID!!'
     })

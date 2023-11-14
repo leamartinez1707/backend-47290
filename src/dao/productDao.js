@@ -52,7 +52,7 @@ export default class ProductDao {
     create = async (product) => {
 
         try {
-            let result = await this.model.create(product)
+            let result = await this.model.create(product).lean()
             if (!result) return {
                 statusCode: 400,
                 response: { status: 'error', error: 'The product could not be added' }
@@ -76,7 +76,7 @@ export default class ProductDao {
                     statusCode: 400,
                     response: { status: 'error', error: 'Incomplete values' }
                 }
-            let result = await this.model.updateOne({ _id: pid }, productToUpdate)
+            let result = await this.model.updateOne({ _id: pid }, productToUpdate).lean()
             if (!result) return {
                 statusCode: 400,
                 response: { status: 'error', error: 'The product could not be updated' }
@@ -95,7 +95,7 @@ export default class ProductDao {
     }
     delete = async (pid) => {
         try {
-            let result = await this.model.deleteOne({ _id: pid })
+            let result = await this.model.deleteOne({ _id: pid }).lean()
             if (!result) return {
                 statusCode: 400,
                 response: { status: 'error', error: 'The product could not be deleted' }

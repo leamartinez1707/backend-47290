@@ -80,7 +80,8 @@ export default class CartDao {
         try {
 
             // BUSCAR EL CARRITO CON EL ID QUE SE LE PASO POR PARAMETRO
-            let cart = await this.model.findById(cid)
+            let cart = await this.model.findById(cid).lean()
+            
             if (cart === null) return {
                 statusCode: 404,
                 response: {
@@ -129,7 +130,7 @@ export default class CartDao {
                 }
                 // return res.status(400).json({ status: 'error', error: 'Quantity must be a Number' })
 
-                const prdToAdd = await this.modelProduct.findById(prd.product)
+                const prdToAdd = await this.modelProduct.findById(prd.product).lean()
                 if (prdToAdd === null) return {
                     statusCode: 400,
                     response: {
@@ -144,7 +145,7 @@ export default class CartDao {
             cart.products = newCart
 
             await this.model.findByIdAndUpdate(cid, cart, { Document: 'after' })
-            cart = await this.model.findById(cid)
+            cart = await this.model.findById(cid).lean()
             return {
                 statusCode: 200,
                 response: {
@@ -166,7 +167,7 @@ export default class CartDao {
 
     create = async () => {
         try {
-            const result = await this.model.create({})
+            const result = await this.model.create({}).lean()
             return {
                 statusCode: 201,
                 response: {
@@ -214,7 +215,7 @@ export default class CartDao {
             } else {
                 cart.products[productIndex].quantity++
             }
-            await this.model.findByIdAndUpdate(cid, cart, { Document: 'after' }).lean()
+            await this.model.findByIdAndUpdate(cid, cart, { Document: 'after' })
             cart = await this.model.findById(cid).lean()
             return {
                 statusCode: 201,
@@ -259,7 +260,7 @@ export default class CartDao {
             }
 
             // ACTUALIZAR EL CARRITO EN LA BASE DE DATOS, SIN EL PRODUCTO ANTERIORMENTE BORRADO
-            await this.model.findByIdAndUpdate(cid, cart, { Document: 'after' }).lean()
+            await this.model.findByIdAndUpdate(cid, cart, { Document: 'after' })
             cart = await this.model.findById(cid).lean()
             return {
                 statusCode: 200,
@@ -277,7 +278,7 @@ export default class CartDao {
     updateProductFromCart = async (cid, pid, data) => {
         try {
             // BUSCAR EL CARRITO CON EL ID QUE SE LE PASO POR PARAMETRO
-            let cart = await this.model.findById(cid)
+            let cart = await this.model.findById(cid).lean()
 
             if (cart === null) {
                 return {
@@ -287,7 +288,7 @@ export default class CartDao {
             }
             // ---> CREAR UNA VERIFICACION DONDE SI EL PRODUCTO NO ES ENCONTRADO, EMITA UN ERROR
 
-            let productTest = await this.modelProduct.findById(pid)
+            let productTest = await this.modelProduct.findById(pid).lean()
 
             if (!productTest) return {
                 statusCode: 400,
@@ -320,7 +321,7 @@ export default class CartDao {
 
             // ACTUALIZAR EL CARRITO EN LA BASE DE DATOS, SIN EL PRODUCTO ANTERIORMENTE BORRADO
             let result = await this.model.findByIdAndUpdate(cid, cart, { Document: 'after' }).lean()
-            cart = await this.model.findById(cid)
+            cart = await this.model.findById(cid).lean()
             if (!result) return {
                 statusCode: 400,
                 response: { status: 'error', error: 'Cart could not be updated' }
