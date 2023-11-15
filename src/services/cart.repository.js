@@ -6,20 +6,6 @@ export default class CartRepository {
         // this.cartDAO = new CartDao()
         this.dao = dao
     }
-
-    // getProductsFromCartService = async (cid) => {
-    //     return await this.cartDAO.getAll(cid)
-    // }
-    // deleteCartService = async (cid) => {
-    //     return await this.cartDAO.delete(cid)
-    // }
-    // updateCartService = async (cid) => {
-    //     return await this.cartDAO.update(cid)
-    // }
-    // createCartService = async () => {
-    //     return await this.cartDAO.create()
-    // }
-
     getAll = async (cid) => await this.dao.getAll(cid)
     create = async () => await this.dao.create()
     update = async (cid, data) => await this.dao.update(cid, data)

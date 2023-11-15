@@ -111,10 +111,10 @@ const purchaseCartController = async (req, res) => {
             amount,
             purchaser: req.session.user.email
         })
-
+        console.log(productsAfterPurchase)
         return res.status(201).render('checkoutRes', {
             purchaseCode: ticket.code,
-            purchaseProducts: ticket.products.map(prd => prd.toJSON()),
+            noStockProducts: productsAfterPurchase,
             purchaseAmount: ticket.amount,
             purchaseBuyer: ticket.purchaser,
             purchaseSubTotal: ticket.amount * 0.8
