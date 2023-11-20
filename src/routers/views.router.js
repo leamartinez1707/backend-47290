@@ -8,7 +8,7 @@ const router = Router()
 router.get('/', publicRoutes, verifyRoles(['user', 'admin']), viewControl.getProductsViewController)
 router.get('/:cid', publicRoutes, verifyRoles(['user']), viewControl.getProductsFromCartViewController)
 router.get('/product/:pid', publicRoutes, verifyRoles(['user', 'admin']), viewControl.getProductByIdViewController)
-router.get('/real/realtimeproducts', publicRoutes, verifyRoles(['user', 'admin']), (req, res) => {
+router.get('/real/realtimeproducts', publicRoutes, verifyRoles(['admin']), (req, res) => {
     res.render("realTimeProducts")
 })
 

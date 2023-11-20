@@ -104,13 +104,20 @@ const getProductsFromCartViewController = async (req, res) => {
 
     const cid = req.params.cid
     const cartProducts = await CartService.getAll(cid)
-    
+
+    let amount = 0
+    // console.log(cartProducts)
+    cartProducts.response.payload.products.map(prd => amount += prd.product.price)
+
     if (cartProducts === null) return res.status(cartProducts.statusCode).render("pageError", {
         error: 'No pudimos encontrar el carrito con este ID!!'
     })
     res.status(cartProducts.statusCode).render("cart", {
         cartProducts: cartProducts.response.payload.products,
-        cartId: cartProducts.response.payload._id
+        cartId: cartProducts.response.payload._id,
+        amount: Math.round(amount),
+        subTotal: Math.round(amount * 0.8),
+        ship: Math.round(amount * 0.2)
     })
 }
 const getSessionUser = async (req, res) => {
