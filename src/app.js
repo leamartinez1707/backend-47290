@@ -5,7 +5,6 @@ import session from 'express-session'
 import handlebars from 'express-handlebars'
 import { Server } from 'socket.io'
 import Sockets from './sockets.js'
-// import { productModel } from './dao/models/product.model.js'
 import productRouter from './routers/products.router.js'
 import cartsRouter from './routers/carts.router.js'
 import viewsRouter from './routers/views.router.js'
@@ -13,6 +12,8 @@ import sessionViewRouter from './routers/sessionView.router.js'
 import sessionRouter from './routers/session.router.js'
 import chatRouter from './routers/chat.router.js'
 import config from './config/config.js'
+import mockingRouter from './routers/mocking.router.js'
+import errorHandler from './middlewares/errors.js'
 
 import passport from 'passport'
 import initializePassport from './config/passport.config.js'
@@ -46,8 +47,6 @@ app.use(express.static('./public'))
 // Con esta expresion permitimos enviar datos POST desde un formulario HTML
 app.use(express.urlencoded({ extended: true }))
 
-
-
 try {
 
     // Conexion a la base de datos de Mongoose
@@ -65,33 +64,18 @@ try {
         next()
     })
 
+    app.use(errorHandler)
     app.use('/', sessionViewRouter)
     app.use('/session', sessionRouter)
     app.use('/api/products', productRouter)
     app.use('/api/carts', cartsRouter)
     app.use('/products', viewsRouter)
     app.use('/carts', viewsRouter)
-    app.use("/chat", chatRouter)
+    app.use('/chat', chatRouter)
+    app.use('/mockingproducts', mockingRouter)
 
     Sockets(io)
 
-    // io.on('connection', async (socket) => {
-    //     console.log(`Nuevo cliente conectado: ${socket.id}`)
-    //     const productsList = await productModel.find().lean()
-    //     socket.emit('products', productsList)
-
-    //     socket.on('add', async product => {
-    //         await productModel.create(product)
-    //         const productsList = await productModel.find().lean()
-    //         io.emit('products', productsList)
-    //     })
-    //     socket.on('delete', async id => {
-    //         await productModel.deleteOne({ _id: id })
-    //         let productsList = await productModel.find().lean()
-    //         io.emit('products', productsList)
-
-    //     })
-    // })
 } catch (error) {
     console.log(error.message)
 

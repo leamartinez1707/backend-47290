@@ -1,5 +1,8 @@
 import { Router } from "express";
 import passport from "passport";
+import CustomError from '../services/errors/custom_error.js'
+import EErros from '../services/errors/enums.js'
+import { generateErrorInfo } from '../services/errors/description.js'
 
 const router = Router()
 
@@ -8,10 +11,21 @@ router.post('/register', passport.authenticate('register', {
     successRedirect: '/session/registerAccepted'
 }), async (req, res) => {
 
+
 })
 
 router.post('/login', passport.authenticate('login', { failureRedirect: '/session/errorLogin' }), async (req, res) => {
 
+    const user = req.user
+    console.log(user)
+    if (!user.email || !user.password) {
+        CustomError.createError({
+            name: "User creation error",
+            cause: generateErrorInfo(user),
+            message: "Error trying to create a user",
+            code: EErros.INVALID_TYPES_ERROR
+        })
+    }
     if (!req.user) {
         res.status(400).send({ status: 'error', error: error.message })
     }
