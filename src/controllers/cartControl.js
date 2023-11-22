@@ -42,6 +42,7 @@ const addProductToCartController = async (req, res) => {
     const cid = req.params.cid
     const pid = req.params.pid
     const result = await CartService.addToCart(cid, pid)
+    console.log(req.user)
     if (result.statusCode === 500) {
         return res.status(result.statusCode).send(result.response.error)
     }

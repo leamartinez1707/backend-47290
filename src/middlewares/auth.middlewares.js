@@ -11,8 +11,13 @@ export const privateRoutes = (req, res, next) => {
 }
 
 export const verifyRoles = (acceptedRoles) => {
+
     return (req, res, next) => {
         // El rol del usuario se almacena en req.user
+        if (!req.user && acceptedRoles.includes('public')) {
+
+            next()
+        }
         if (!req.user) return res.status(400).render('pageError', { error: 'Debe iniciar sesión para ingresar a la página' })
         const userRole = req.user.role
         if (acceptedRoles.includes(userRole)) {

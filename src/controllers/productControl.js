@@ -1,6 +1,16 @@
 import { ProductService } from '../services/index.js'
+import CustomError from '../services/errors/custom_error.js'
+import EErros from '../services/errors/enums.js'
+import { generateErrorInfo, generateErrorInfoTwo } from '../services/errors/description.js'
 
 const getProducts = async (req, res) => {
+
+    // const result = await ProductService.getAll()
+    // console.log(result)
+    // if (result.statusCode === 500 || result.statusCode === 400) {
+    //     return res.status(result.statusCode).send(result.response.error)
+    // }
+    // res.status(200).json({status: 'success', payload: result.response.payload})
 
     const { limit = 10, page = 1 } = req.query
     const pageFilters = {}
@@ -14,8 +24,6 @@ const getProducts = async (req, res) => {
     if (req.query.sort === 'asc') paginateOpt.sort = { price: 1 }
     if (req.query.sort === 'des') paginateOpt.sort = { price: -1 }
 
-    // let result = await productService.getProductsService()
-    // const result = await productService.productDAO.model.paginate(pageFilters, paginateOpt)
     const result = await ProductService.dao.model.paginate(pageFilters, paginateOpt)
 
     if (!result) return {
@@ -65,13 +73,37 @@ const getProductByIdController = async (req, res) => {
     const pid = req.params.pid
     const result = await ProductService.getById(pid)
     if (result.statusCode === 500 || result.statusCode === 400) {
-        return res.status(result.statusCode).send(result.response.error)
+        // return res.status(result.statusCode).send(result.response.error)
+        try {
+            CustomError.createError({
+                name: "Error en busqueda de producto",
+                cause: generateErrorInfoTwo(result.response.payload),
+                message: "No se pudo obtener el producto por su ID",
+                code: EErros.DATABASES_ERROR
+            })
+        } catch (err) {
+            console.log(err)
+        }
+        res.status(result.statusCode).send('Producto no encontrado')
     }
     res.send(result.response.payload)
 }
 const addProductController = async (req, res) => {
     let { title, description, price, code, category, stock, thumbnail } = req.body
     const product = { title, description, price, code, category, stock, thumbnail }
+
+    if (!title || !description || !price || !code || !category || !stock || !thumbnail) {
+        try {
+            CustomError.createError({
+                name: "Product creation error",
+                cause: generateErrorInfo(product),
+                message: "Error trying to create a product",
+                code: EErros.INVALID_TYPES_ERROR
+            })
+        } catch (err) {
+            console.log(err)
+        }
+    }
     const result = await ProductService.create(product)
     if (result.statusCode === 500) {
         return res.status(result.statusCode).send(result.response.error)

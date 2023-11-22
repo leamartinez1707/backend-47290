@@ -64,7 +64,7 @@ try {
         next()
     })
 
-    app.use(errorHandler)
+    
     app.use('/', sessionViewRouter)
     app.use('/session', sessionRouter)
     app.use('/api/products', productRouter)
@@ -73,6 +73,7 @@ try {
     app.use('/carts', viewsRouter)
     app.use('/chat', chatRouter)
     app.use('/mockingproducts', mockingRouter)
+    app.use(errorHandler)
 
     Sockets(io)
 

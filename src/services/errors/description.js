@@ -1,9 +1,19 @@
-export const generateErrorInfo = user => {
+export const generateErrorInfo = (product) => {
     return `
-    Una o mas propiedades están incompletos o no son válidas.
+    Una o mas propiedades están incompletas o no son válidas.
     Lista de propiedades obligatorias:
-        - first_name: Must be a string. (${user.first_name})
-        - last_name: Must be a string. (${user.last_name})
-        - email: Must be a string. (${user.email})
+        - title: Debe ser un String. (${product.title})
+        - description: Debe ser un String. (${product.description})
+        - price: Debe ser un número. (${product.price})
+        - code: Debe ser un código único. (${product.code})
+        - category: Debe ser un String. (${product.category})
+        - stock: Debe ser un número. (${product.stock})
+        - thumbnail: Debe ser un Array. (${product.thumbnail})
+    `
+}
+
+export const generateErrorInfoTwo = (data) => {
+    return `
+        La respuesta del servidor fue: ${data}
     `
 }

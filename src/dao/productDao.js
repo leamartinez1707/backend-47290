@@ -52,7 +52,7 @@ export default class ProductDao {
     create = async (product) => {
 
         try {
-            let result = await this.model.create(product).lean()
+            let result = await this.model.create(product)
             if (!result) return {
                 statusCode: 400,
                 response: { status: 'error', error: 'The product could not be added' }
