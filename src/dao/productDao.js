@@ -76,7 +76,8 @@ export default class ProductDao {
                     statusCode: 400,
                     response: { status: 'error', error: 'Incomplete values' }
                 }
-            let result = await this.model.updateOne({ _id: pid }, productToUpdate).lean()
+            let result = await this.model.updateOne({ _id: pid }, productToUpdate)
+            
             if (!result) return {
                 statusCode: 400,
                 response: { status: 'error', error: 'The product could not be updated' }

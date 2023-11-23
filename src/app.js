@@ -15,6 +15,7 @@ import config from './config/config.js'
 import mockingRouter from './routers/mocking.router.js'
 import errorHandler from './middlewares/errors.js'
 
+
 import passport from 'passport'
 import initializePassport from './config/passport.config.js'
 
@@ -64,7 +65,6 @@ try {
         next()
     })
 
-    
     app.use('/', sessionViewRouter)
     app.use('/session', sessionRouter)
     app.use('/api/products', productRouter)
@@ -74,7 +74,8 @@ try {
     app.use('/chat', chatRouter)
     app.use('/mockingproducts', mockingRouter)
     app.use(errorHandler)
-
+    
+    
     Sockets(io)
 
 } catch (error) {

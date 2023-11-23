@@ -90,25 +90,28 @@ const getProductByIdController = async (req, res) => {
 }
 const addProductController = async (req, res) => {
     let { title, description, price, code, category, stock, thumbnail } = req.body
+    try{
     const product = { title, description, price, code, category, stock, thumbnail }
 
     if (!title || !description || !price || !code || !category || !stock || !thumbnail) {
-        try {
-            CustomError.createError({
-                name: "Product creation error",
-                cause: generateErrorInfo(product),
-                message: "Error trying to create a product",
-                code: EErros.INVALID_TYPES_ERROR
-            })
-        } catch (err) {
-            console.log(err)
-        }
+
+        CustomError.createError({
+            name: "ERROR EN LA CREACIÓN DEL PRODUCTO",
+            cause: generateErrorInfo(product),
+            message: "El producto no se pudo crear debido a que faltan propiedades.",
+            code: EErros.INVALID_TYPES_ERROR
+        })
+
     }
+    
     const result = await ProductService.create(product)
     if (result.statusCode === 500) {
         return res.status(result.statusCode).send(result.response.error)
     }
     res.status(result.statusCode).send(result.response.payload)
+}catch(err){
+    res.status(500).send(err.cause)
+}
 }
 const updateProductController = async (req, res) => {
     const pid = req.params.pid

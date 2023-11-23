@@ -42,7 +42,7 @@ const addProductToCartController = async (req, res) => {
     const cid = req.params.cid
     const pid = req.params.pid
     const result = await CartService.addToCart(cid, pid)
-    console.log(req.user)
+
     if (result.statusCode === 500) {
         return res.status(result.statusCode).send(result.response.error)
     }
@@ -92,6 +92,7 @@ const purchaseCartController = async (req, res) => {
                 // Se verifica si la cantidad del producto a comprar es igual o menor al stock del producto
                 // Se actualiza el stock del producto a comprar
                 productToBuy.stock -= purchaseCart.products[index].quantity
+
                 await ProductService.update(productToBuy._id, productToBuy)
                 // Eliminamos del carrito todos los productos que se compraron y dejamos los que no tenian stock
                 productsAfterPurchase = productsAfterPurchase.filter((prds) => prds.product._id.toString() !== purchaseCart.products[index].product._id.toString())
@@ -112,7 +113,7 @@ const purchaseCartController = async (req, res) => {
             amount,
             purchaser: req.session.user.email
         })
-        console.log(productsAfterPurchase)
+
         return res.status(201).render('checkoutRes', {
             purchaseCode: ticket.code,
             noStockProducts: productsAfterPurchase,
