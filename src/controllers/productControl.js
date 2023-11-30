@@ -102,7 +102,7 @@ const addProductController = async (req, res) => {
             code: EErros.INVALID_TYPES_ERROR
         })
 
-        return res.status(400).send({ status: 'error', payload: error })
+        return res.status(400).send(error)
     } else {
 
         const result = await ProductService.create(product)
