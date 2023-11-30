@@ -71,16 +71,18 @@ export default class ProductDao {
     }
     update = async (pid, productToUpdate) => {
         try {
-            if (!productToUpdate.title || !productToUpdate.description || !productToUpdate.price || !productToUpdate.code || !productToUpdate.category || !productToUpdate.stock || !productToUpdate.thumbnail)
+            if (!productToUpdate.title || !productToUpdate.description || !productToUpdate.price || !productToUpdate.code || !productToUpdate.category || !productToUpdate.thumbnail) {
                 return {
                     statusCode: 400,
                     response: { status: 'error', error: 'Incomplete values' }
                 }
+            }
             let result = await this.model.updateOne({ _id: pid }, productToUpdate)
-            
-            if (!result) return {
-                statusCode: 400,
-                response: { status: 'error', error: 'The product could not be updated' }
+            if (!result) {
+                return {
+                    statusCode: 400,
+                    response: { status: 'error', error: 'The product could not be updated' }
+                }
             }
             return {
                 statusCode: 200,

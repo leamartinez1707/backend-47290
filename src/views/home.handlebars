@@ -94,16 +94,23 @@
             icon: "warning"
         })
     }
+    function swalError(error) {
+        Swal.fire({
+            title: `Error al intentar la acción`,
+            text: error,
+            icon: "warning"
+        })
+    }
     function addToCart(pid) {
 
         let cart_id = document.getElementById('cart_id').innerHTML
-        if(!cart_id) return swalPermission()
+        if (!cart_id) return swalPermission()
         fetch(`/api/carts/${cart_id}/product/${pid}`, {
             method: 'post'
         })
             .then(result => result.json())
             .then(result => {
-                if (result.status === 'error') throw new Error(result.error)
+                if (result.status === 'error') return swalError(result.payload)
                 swalAdded()
             })
             .catch(error => alert(error))

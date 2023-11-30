@@ -11,7 +11,7 @@ export default class CartDao {
         try {
             // const cid = req.params.cid
             let cart = await this.model.findById(cid).populate('products.product').lean()
-            
+
             if (!cart) {
                 return {
                     statusCode: 404, response: {
@@ -81,7 +81,7 @@ export default class CartDao {
 
             // BUSCAR EL CARRITO CON EL ID QUE SE LE PASO POR PARAMETRO
             let cart = await this.model.findById(cid).lean()
-            
+
             if (cart === null) return {
                 statusCode: 404,
                 response: {
@@ -200,6 +200,10 @@ export default class CartDao {
             if (product === null) return {
                 statusCode: 400,
                 response: { status: 'error', error: `Product "${pid}" was not found` }
+            }
+            if (product.stock === 0) return {
+                statusCode: 400,
+                response: { status: 'error', error: `Product "${pid}" is out of stock` }
             }
 
             let quantity = 1

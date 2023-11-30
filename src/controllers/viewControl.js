@@ -25,26 +25,26 @@ const getProductsViewController = async (req, res) => {
     let previousLink
 
     if (!req.query.page) {
-        console.log(req.query)
+
     }
 
     if (req.query.page) {
-        console.log(req.query)
+
         const modifiedUrl = req.originalUrl.replace(`page=${req.query.page}`, `page=${result.prevPage}`)
         previousLink = `http://${req.hostname}:8080${modifiedUrl}`
     } else {
         previousLink = `http://${req.hostname}:8080${req.originalUrl}?page=${result.prevPage}`
-        console.log('aca iria el page')
+
     }
     let nextLink
 
     if (req.query.page) {
-        console.log(req.query)
+
         const modifiedUrl = req.originalUrl.replace(`page=${req.query.page}`, `page=${result.nextPage}`)
         nextLink = `http://${req.hostname}:8080${modifiedUrl}`
     } else {
         nextLink = `http://${req.hostname}:8080${req.originalUrl}?page=${result.nextPage}`
-        console.log('aca iria el page 2')
+
     }
 
     const totalPages = []
@@ -112,7 +112,7 @@ const getProductsFromCartViewController = async (req, res) => {
     const cartProducts = await CartService.getAll(cid)
 
     let amount = 0
-    // console.log(cartProducts)
+    
     cartProducts.response.payload.products.map(prd => amount += prd.product.price)
 
     if (cartProducts === null) return res.status(cartProducts.statusCode).render("pageError", {
