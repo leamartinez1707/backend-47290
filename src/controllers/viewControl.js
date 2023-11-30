@@ -24,21 +24,27 @@ const getProductsViewController = async (req, res) => {
     })
     let previousLink
 
-    if (req.query.page) {
+    if (!req.query.page) {
+        console.log(req.query)
+    }
 
+    if (req.query.page) {
+        console.log(req.query)
         const modifiedUrl = req.originalUrl.replace(`page=${req.query.page}`, `page=${result.prevPage}`)
         previousLink = `http://${req.hostname}:8080${modifiedUrl}`
     } else {
-        previousLink = `http://${req.hostname}:8080${req.originalUrl}&page=${result.prevPage}`
+        previousLink = `http://${req.hostname}:8080${req.originalUrl}?page=${result.prevPage}`
+        console.log('aca iria el page')
     }
     let nextLink
 
     if (req.query.page) {
-
+        console.log(req.query)
         const modifiedUrl = req.originalUrl.replace(`page=${req.query.page}`, `page=${result.nextPage}`)
         nextLink = `http://${req.hostname}:8080${modifiedUrl}`
     } else {
-        nextLink = `http://${req.hostname}:8080${req.originalUrl}&page=${result.nextPage}`
+        nextLink = `http://${req.hostname}:8080${req.originalUrl}?page=${result.nextPage}`
+        console.log('aca iria el page 2')
     }
 
     const totalPages = []
@@ -51,7 +57,7 @@ const getProductsViewController = async (req, res) => {
 
         } else if (req.query.page > result.totalPages) {
 
-            link = `http://${req.hostname}:8080${req.originalUrl}&page=${index}`
+            link = `http://${req.hostname}:8080${req.originalUrl}?page=${index}`
         }
         else {
             const modifiedUrl = req.originalUrl.replace(`page=${req.query.page}`, `page=${index}`)
