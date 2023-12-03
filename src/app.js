@@ -14,6 +14,7 @@ import chatRouter from './routers/chat.router.js'
 import config from './config/config.js'
 import mockingRouter from './routers/mocking.router.js'
 import errorHandler from './middlewares/errors.js'
+import logger from './logger.js'
 
 
 import passport from 'passport'
@@ -54,10 +55,10 @@ try {
     await mongoose.connect(config.mongo_url, {
         dbName: config.mongo_db_name
     })
-    console.log('Conectado a la DB')
+    logger.info('Conectado a la DB')
 
     // App funciona como servidor web, escuchamos las peticiones en el puerto 8080
-    const httpsrv = app.listen(8080, () => console.log('Server is up !!'))
+    const httpsrv = app.listen(8080, () => logger.info('Server is up !!'))
 
     const io = new Server(httpsrv)
     app.use((req, res, next) => {
@@ -74,12 +75,12 @@ try {
     app.use('/chat', chatRouter)
     app.use('/mockingproducts', mockingRouter)
     app.use(errorHandler)
-    
-    
+
+
     Sockets(io)
 
 } catch (error) {
-    console.log(error.message)
+    logger.error(error.message)
 
 }
 

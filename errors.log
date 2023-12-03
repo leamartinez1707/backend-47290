@@ -1,0 +1,8 @@
+{"level":"fatal","message":"Test de logger Fatal","timestamp":"2023-12-03T21:30:20.227Z"}
+{"level":"error","message":"Test de logger Error","timestamp":"2023-12-03T21:30:20.229Z"}
+{"level":"fatal","message":"Test de logger Fatal","timestamp":"2023-12-03T21:38:35.444Z"}
+{"level":"error","message":"Test de logger Error","timestamp":"2023-12-03T21:38:35.446Z"}
+{"level":"error","message":"El usuario adminCoder@coder.com quiso ingresar a una página que tiene permisos.","timestamp":"2023-12-03T22:03:12.537Z"}
+{"level":"error","message":"El usuario adminCoder@coder.com quiso ingresar a una página que tiene permisos.","timestamp":"2023-12-03T22:06:55.184Z"}
+{"level":"fatal","message":"Test de logger Fatal","timestamp":"2023-12-03T22:22:24.870Z"}
+{"level":"error","message":"Test de logger Error","timestamp":"2023-12-03T22:22:24.871Z"}

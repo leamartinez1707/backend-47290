@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { privateRoutes, publicRoutes } from "../middlewares/auth.middlewares.js";
 import viewControl from "../controllers/viewControl.js";
+import logger from "../logger.js";
 
 
 const router = Router()
@@ -30,7 +31,17 @@ router.get('/session/errorLogin', (req, res) => {
     })
 })
 router.get('/session/registerAccepted', (req, res) => {
+    logger.info(`Usuario ${req.user.email} se ha registrado con éxito en la web`)
     res.render('sessions/registerAccepted')
+})
+router.get('/loggerTest', (req, res) => {
+    logger.fatal('Test de logger Fatal')
+    logger.error('Test de logger Error')
+    logger.warning('Test de logger Warning')
+    logger.info('Test de logger Info')
+    logger.http('Test de logger Http')
+    logger.debug('Test de logger Debug')
+    res.send('Los test se ejecutaron correctamente')
 })
 
 export default router

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import passport from "passport";
+import logger from '../logger.js'
 
 
 const router = Router()
@@ -8,8 +9,7 @@ router.post('/register', passport.authenticate('register', {
     failureRedirect: '/session/errorRegister',
     successRedirect: '/session/registerAccepted'
 }), async (req, res) => {
-
-
+    
 })
 
 router.post('/login', passport.authenticate('login', { failureRedirect: '/session/errorLogin' }), async (req, res) => {
@@ -33,6 +33,7 @@ router.post('/login', passport.authenticate('login', { failureRedirect: '/sessio
             cart: req.user.cart
         }
     }
+    logger.info(`Usuario ${req.user.email} ha ingresado con éxito en la web`)
 
     res.redirect('/products')
 
@@ -52,6 +53,7 @@ router.get('/logout', (req, res) => {
 router.get('/gitCallback', passport.authenticate('github', { failureRedirect: '/session/errorLogin' }), async (req, res) => {
 
     req.session.user = req.user
+    logger.info(`Usuario ${req.user.email} ha ingresado con éxito en la web`)
     res.redirect('/')
 })
 

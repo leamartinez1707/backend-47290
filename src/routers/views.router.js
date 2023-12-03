@@ -3,6 +3,7 @@ import viewControl from "../controllers/viewControl.js";
 import { publicRoutes } from "../middlewares/auth.middlewares.js"
 import { verifyRoles } from "../middlewares/auth.middlewares.js";
 
+
 const router = Router()
 
 router.get('/', publicRoutes, verifyRoles(['user', 'admin']), viewControl.getProductsViewController)
@@ -11,6 +12,7 @@ router.get('/product/:pid', publicRoutes, verifyRoles(['user', 'admin']), viewCo
 router.get('/real/realtimeproducts', publicRoutes, verifyRoles(['admin']), (req, res) => {
     res.render("realTimeProducts")
 })
+
 
 
 export default router

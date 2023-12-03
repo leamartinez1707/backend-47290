@@ -11,5 +11,6 @@ export default {
     clientIDGit: process.env.CLIENT_ID_GITHUB,
     clientSecretGit: process.env.CLIENT_SECRET_GITHUB,
     callbackUrlGit: process.env.CLIENT_URL_GITHUB,
-    persistence: process.env.PERSISTENCE
+    persistence: process.env.PERSISTENCE,
+    environment: process.env.ENVIRONMENT
 }

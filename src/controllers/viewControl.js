@@ -4,7 +4,7 @@ import UserDTO from "../dto/userDTO.js"
 
 const getProductsViewController = async (req, res) => {
 
-    const { limit = 10, page = 1 } = req.query
+    const { limit = 8, page = 1 } = req.query
     const pageFilters = {}
 
     if (req.query.category) pageFilters.category = req.query.category
@@ -53,11 +53,11 @@ const getProductsViewController = async (req, res) => {
     for (let index = 1; index <= result.totalPages; index++) {
         if (!req.query.page) {
 
-            link = `http://${req.hostname}:8080${req.originalUrl}&page=${index}`
+            link = `http://${req.hostname}:8080${req.originalUrl}?page=${index}`
 
         } else if (req.query.page > result.totalPages) {
 
-            link = `http://${req.hostname}:8080${req.originalUrl}?page=${index}`
+            link = `http://${req.hostname}:8080${req.originalUrl}&page=${index}`
         }
         else {
             const modifiedUrl = req.originalUrl.replace(`page=${req.query.page}`, `page=${index}`)
