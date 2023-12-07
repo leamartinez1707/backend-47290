@@ -1,5 +1,8 @@
 import { CartService, ProductService } from '../services/index.js'
 import UserDTO from "../dto/userDTO.js"
+import logger from '../utils/logger.js'
+import dotenv from 'dotenv'
+dotenv.config()
 
 
 const getProductsViewController = async (req, res) => {
@@ -10,18 +13,20 @@ const getProductsViewController = async (req, res) => {
     if (req.query.category) pageFilters.category = req.query.category
     if (req.query.stock) pageFilters.stock = req.query.stock
 
-
     const paginateOpt = { lean: true, limit, page }
 
     if (req.query.sort === 'asc') paginateOpt.sort = { price: 1 }
     if (req.query.sort === 'des') paginateOpt.sort = { price: -1 }
 
-    // let result = await ProductService.getProductsService()
     const result = await ProductService.dao.model.paginate(pageFilters, paginateOpt)
 
-    if (!result) return res.render("pageError", {
-        error: 'La pagina que está buscando no existe!'
-    })
+    if (!result) {
+        logger.error(`El usuario ${req.user.email} quiso acceder al carrito ${cid} y obtuvo un error`)
+
+        return res.render("pageError", {
+            error: 'La pagina que está buscando no existe!'
+        })
+    }
     let previousLink
 
     if (!req.query.page) {
@@ -75,7 +80,6 @@ const getProductsViewController = async (req, res) => {
     const user = req.session.user
 
     return res.render("home",
-
         {
             user,
             products: result.docs,
@@ -97,10 +101,12 @@ const getProductByIdViewController = async (req, res) => {
     const pid = req.params.pid
     const user = req.session.user
     const product = await ProductService.getById(pid)
-
-    if (product === null) return res.status(404).render("pageError", {
-        error: 'No pudimos encontrar el producto con este ID!!'
-    })
+    if (product.statusCode === 500) {
+        logger.error(`El usuario ${req.user.email} quiso ver el detalle del producto ${pid} y este no existe`)
+        return res.status(404).render("pageError", {
+            error: 'No pudimos encontrar el producto con este ID!!'
+        })
+    }
     res.status(200).render("productDetail", {
         product: product.response.payload,
         user
@@ -111,19 +117,23 @@ const getProductsFromCartViewController = async (req, res) => {
     const cid = req.params.cid
     const cartProducts = await CartService.getAll(cid)
 
-    let amount = 0
-    
-    cartProducts.response.payload.products.map(prd => amount += prd.product.price)
+    if (cartProducts.statusCode === 500) {
 
-    if (cartProducts === null) return res.status(cartProducts.statusCode).render("pageError", {
-        error: 'No pudimos encontrar el carrito con este ID!!'
-    })
+        logger.error(`El usuario ${req.user.email} quiso acceder al carrito ${cid} y obtuvo un error`)
+        return res.status(cartProducts.statusCode).render("pageError", {
+            error: 'No pudimos encontrar el carrito con este ID!!'
+        })
+    }
+    let amount = 0
+    cartProducts.response.payload.products.map(prd => amount += prd.product.price)
+    let finalPrice = amount * 1.2
+
     res.status(cartProducts.statusCode).render("cart", {
         cartProducts: cartProducts.response.payload.products,
         cartId: cartProducts.response.payload._id,
-        amount: Math.round(amount),
-        subTotal: Math.round(amount * 0.8),
-        ship: Math.round(amount * 0.2)
+        subTotal: Math.round(amount),
+        ship: Math.round(amount * 0.2),
+        amount: Math.round(finalPrice)
     })
 }
 const getSessionUser = async (req, res) => {

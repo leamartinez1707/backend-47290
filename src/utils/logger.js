@@ -33,7 +33,6 @@ const createLogger = env => {
                 new winston.transports.Console({
                     level: 'info',
                     format: winston.format.combine(
-                        winston.format.timestamp(),
                         winston.format.colorize(),
                         winston.format.simple()
                     )

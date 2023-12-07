@@ -14,7 +14,7 @@ import chatRouter from './routers/chat.router.js'
 import config from './config/config.js'
 import mockingRouter from './routers/mocking.router.js'
 import errorHandler from './middlewares/errors.js'
-import logger from './logger.js'
+import logger from './utils/logger.js'
 
 
 import passport from 'passport'

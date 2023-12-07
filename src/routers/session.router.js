@@ -1,6 +1,6 @@
 import { Router } from "express";
 import passport from "passport";
-import logger from '../logger.js'
+import logger from '../utils/logger.js'
 
 
 const router = Router()
@@ -9,7 +9,7 @@ router.post('/register', passport.authenticate('register', {
     failureRedirect: '/session/errorRegister',
     successRedirect: '/session/registerAccepted'
 }), async (req, res) => {
-    
+
 })
 
 router.post('/login', passport.authenticate('login', { failureRedirect: '/session/errorLogin' }), async (req, res) => {

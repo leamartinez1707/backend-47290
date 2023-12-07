@@ -6,3 +6,8 @@
 {"level":"error","message":"El usuario adminCoder@coder.com quiso ingresar a una página que tiene permisos.","timestamp":"2023-12-03T22:06:55.184Z"}
 {"level":"fatal","message":"Test de logger Fatal","timestamp":"2023-12-03T22:22:24.870Z"}
 {"level":"error","message":"Test de logger Error","timestamp":"2023-12-03T22:22:24.871Z"}
+{"level":"fatal","message":"Test de logger Fatal","timestamp":"2023-12-07T02:28:27.203Z"}
+{"level":"error","message":"Test de logger Error","timestamp":"2023-12-07T02:28:27.206Z"}
+{"level":"error","message":"El usuario {\n  _id: new ObjectId(\"6567eb427508271f02bb4111\"),\n  first_name: 'Leandro',\n  last_name: 'Martinez',\n  email: 'leandromart@hotmail.com',\n  age: 27,\n  password: '$2b$10$Egcw8GUFfuOO5LZXovLIR.vCyYp/cIevkO.SUeuBADW4PFkR2vb2a',\n  cart: new ObjectId(\"6567eb427508271f02bb410f\"),\n  role: 'user',\n  __v: 0\n} quiso accesder a su carrito 6567eb427508271f02bb410 y obtuvo un error","timestamp":"2023-12-07T03:07:52.305Z"}
+{"level":"error","message":"El usuario leandromart@hotmail.com quiso accesder a su carrito 6567eb427508271f02bb41 y obtuvo un error","timestamp":"2023-12-07T03:09:07.629Z"}
+{"level":"error","message":"El usuario leandromart@hotmail.com quiso ver el detalle del producto 6507a13256f257fb0fdda04ad y este no existe","timestamp":"2023-12-07T03:23:32.308Z"}

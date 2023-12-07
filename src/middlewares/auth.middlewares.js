@@ -1,4 +1,4 @@
-import logger from "../logger.js"
+import logger from "../utils/logger.js"
 
 export const publicRoutes = (req, res, next) => {
 

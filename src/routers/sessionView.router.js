@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { privateRoutes, publicRoutes } from "../middlewares/auth.middlewares.js";
 import viewControl from "../controllers/viewControl.js";
-import logger from "../logger.js";
+import logger from "../utils/logger.js"
 
 
 const router = Router()
@@ -35,6 +35,7 @@ router.get('/session/registerAccepted', (req, res) => {
     res.render('sessions/registerAccepted')
 })
 router.get('/loggerTest', (req, res) => {
+    
     logger.fatal('Test de logger Fatal')
     logger.error('Test de logger Error')
     logger.warning('Test de logger Warning')
