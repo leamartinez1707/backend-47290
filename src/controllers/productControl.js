@@ -2,15 +2,9 @@ import { ProductService } from '../services/index.js'
 import CustomError from '../services/errors/custom_error.js'
 import EErros from '../services/errors/enums.js'
 import { generateErrorInfo, generateErrorInfoTwo } from '../services/errors/description.js'
+import logger from '../utils/logger.js'
 
 const getProducts = async (req, res) => {
-
-    // const result = await ProductService.getAll()
-    // console.log(result)
-    // if (result.statusCode === 500 || result.statusCode === 400) {
-    //     return res.status(result.statusCode).send(result.response.error)
-    // }
-    // res.status(200).json({status: 'success', payload: result.response.payload})
 
     const { limit = 10, page = 1 } = req.query
     const pageFilters = {}
@@ -73,7 +67,6 @@ const getProductByIdController = async (req, res) => {
     const pid = req.params.pid
     const result = await ProductService.getById(pid)
     if (result.statusCode === 500 || result.statusCode === 400) {
-        // return res.status(result.statusCode).send(result.response.error)
         try {
             CustomError.createError({
                 name: "Error en busqueda de producto",
@@ -81,8 +74,9 @@ const getProductByIdController = async (req, res) => {
                 message: "No se pudo obtener el producto por su ID",
                 code: EErros.DATABASES_ERROR
             })
+            logger.error('Error al buscar un producto por su ID')
         } catch (err) {
-            console.log(err)
+            logger.error(err)
         }
         res.status(result.statusCode).send('Producto no encontrado')
     }
@@ -101,6 +95,7 @@ const addProductController = async (req, res) => {
             message: "El producto no se pudo crear debido a que faltan propiedades.",
             code: EErros.INVALID_TYPES_ERROR
         })
+        logger.error(`El producto ${code} no se pudo crear debido a que faltan propiedades.`)
 
         return res.status(400).send(error)
     } else {
@@ -113,6 +108,7 @@ const addProductController = async (req, res) => {
                 message: `El producto no se pudo crear debido a que el codigo "${code}" ya existe`,
                 code: EErros.PRODUCT_CODE
             })
+            logger.error(error.message)
             return res.status(result.statusCode).send(error.message)
         }
         res.status(result.statusCode).send(result.response.payload)

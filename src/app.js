@@ -58,7 +58,7 @@ try {
     logger.info('Conectado a la DB')
 
     // App funciona como servidor web, escuchamos las peticiones en el puerto 8080
-    const httpsrv = app.listen(8080, () => logger.info('Server is up !!'))
+    const httpsrv = app.listen(config.port, () => logger.info(`Server is up at Port: ${config.port} !!`))
 
     const io = new Server(httpsrv)
     app.use((req, res, next) => {

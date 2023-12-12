@@ -1,6 +1,12 @@
 import dotenv from 'dotenv'
+import program from '../utils/commands.js'
 
-dotenv.config()
+const opts = program.opts()
+console.log(`Envi = ${opts.mode}`)
+
+dotenv.config({
+    path: opts.mode === 'production' ? './.env.production' : './.env.development'
+})
 
 export default {
     admin_email: process.env.ADMIN_EMAIL,
@@ -12,5 +18,6 @@ export default {
     clientSecretGit: process.env.CLIENT_SECRET_GITHUB,
     callbackUrlGit: process.env.CLIENT_URL_GITHUB,
     persistence: process.env.PERSISTENCE,
-    environment: process.env.ENVIRONMENT
+    environment: opts.mode || process.env.ENVIRONMENT,
+    port: opts.p || process.env.PORT
 }

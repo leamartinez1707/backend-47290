@@ -1,5 +1,8 @@
 import winston from 'winston'
 import dotenv from 'dotenv'
+import config from '../config/config.js'
+
+
 dotenv.config()
 
 const customLevelsOptions = {
@@ -25,7 +28,7 @@ const customLevelsOptions = {
 winston.addColors(customLevelsOptions.colors)
 
 const createLogger = env => {
-
+    console.log(env)
     if (env === 'PROD') {
         return winston.createLogger({
             levels: customLevelsOptions.levels,
@@ -64,6 +67,6 @@ const createLogger = env => {
     }
 }
 
-const logger = createLogger(process.env.ENVIRONMENT)
+const logger = createLogger(config.environment)
 
 export default logger
