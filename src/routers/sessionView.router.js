@@ -35,7 +35,7 @@ router.get('/session/registerAccepted', (req, res) => {
     res.render('sessions/registerAccepted')
 })
 router.get('/loggerTest', (req, res) => {
-    
+
     logger.fatal('Test de logger Fatal')
     logger.error('Test de logger Error')
     logger.warning('Test de logger Warning')
@@ -44,5 +44,13 @@ router.get('/loggerTest', (req, res) => {
     logger.debug('Test de logger Debug')
     res.send('Los test se ejecutaron correctamente')
 })
+router.get('/forget_password', (req, res) => {
+    res.render('sessions/forget_password')
+})
+
+router.get('/reset_password/:token', (req, res) => {
+    res.redirect(`/session/verify_token/${req.params.token}`)
+})
+
 
 export default router

@@ -19,5 +19,7 @@ export default {
     callbackUrlGit: process.env.CLIENT_URL_GITHUB,
     persistence: process.env.PERSISTENCE,
     environment: opts.mode || process.env.ENVIRONMENT,
-    port: opts.p || process.env.PORT
+    port: opts.p || process.env.PORT,
+    nodemailer_user: process.env.MAILER_USER,
+    nodemailer_pass: process.env.MAILER_PASS
 }

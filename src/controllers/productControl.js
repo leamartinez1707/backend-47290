@@ -100,6 +100,8 @@ const addProductController = async (req, res) => {
         return res.status(400).send(error)
     } else {
 
+        product.owner = req.session.user.email
+
         const result = await ProductService.create(product)
         if (result.statusCode === 500) {
             const error = CustomError.createError({
@@ -116,6 +118,12 @@ const addProductController = async (req, res) => {
 }
 const updateProductController = async (req, res) => {
     const pid = req.params.pid
+
+    if (req.session.user === 'premium') {
+        const product = await ProductService.getById(pid)
+        
+        if (product.response.payload.owner !== req.session.user.email) return res.status(403).send('Not authorized')
+    }
     const productToUpdate = req.body
     const result = await ProductService.update(pid, productToUpdate)
     if (result.statusCode === 500) {
@@ -125,6 +133,11 @@ const updateProductController = async (req, res) => {
 }
 const deleteProductController = async (req, res) => {
     const pid = req.params.pid
+    if (req.session.user === 'premium') {
+        const product = await ProductService.getById(pid)
+        
+        if (product.response.payload.owner !== req.session.user.email) return res.status(403).send('Not authorized')
+    }
     const result = await ProductService.delete(pid)
     if (result.statusCode === 500) {
         return res.status(result.statusCode).send(result.response.error)

@@ -41,9 +41,13 @@ const addProductToCartController = async (req, res) => {
 
     const cid = req.params.cid
     const pid = req.params.pid
+    if (req.session.user === 'premium') {
+        const product = await ProductService.getById(pid)
+        if (product.response.payload.owner === req.session.user.email) return res.status(403).json({ status: 'error', error: 'You cannot buy your own products' })
+    }
     const result = await CartService.addToCart(cid, pid)
     if (result.statusCode === 500 || result.statusCode === 400) {
-        return res.status(result.statusCode).json({ status: 'error', payload: result.response.error })
+        return res.status(result.statusCode).json({ status: 'error', error: result.response.error })
         // send(result.response.error)
     }
     res.status(result.statusCode).send(result.response.payload)

@@ -6,12 +6,12 @@ const router = Router()
 
 // Ya en app.js se indica que la direccion es /api/products
 // , verifyRoles(['admin', 'user', 'public'])
-router.get('/', productControl.getProducts)
+router.get('/', verifyRoles(['admin', 'user', 'premium']), productControl.getProducts)
 // verifyRoles(['user', 'admin'])
-router.get('/:pid', productControl.getProductByIdController)
-router.post('/', productControl.addProductController)
+router.get('/:pid', verifyRoles(['user', 'admin', 'premium']), productControl.getProductByIdController)
+router.post('/', verifyRoles(['premium']), productControl.addProductController)
 // , verifyRoles(['user'])
-router.put('/:pid', verifyRoles(['user']), productControl.updateProductController)
-router.delete('/:pid', verifyRoles(['user']), productControl.deleteProductController)
+router.put('/:pid', verifyRoles(['admin', 'premium']), productControl.updateProductController)
+router.delete('/:pid', verifyRoles(['admin', 'premium']), productControl.deleteProductController)
 
 export default router

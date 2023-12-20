@@ -107,7 +107,7 @@
         })
             .then(result => result.json())
             .then(result => {
-                if (result.status === 'error') return swalError(result.payload)
+                if (result.status === 'error') return swalError(result.error)
                 swalAdded()
             })
             .catch(error => alert(error))

@@ -16,11 +16,9 @@ export const verifyRoles = (acceptedRoles) => {
 
     return (req, res, next) => {
         // El rol del usuario se almacena en req.user
-        if (!req.user && acceptedRoles.includes('public')) {
-            next()
-        }
+        if (acceptedRoles.includes('public')) return next()
         if (!req.user) return res.status(400).render('pageError', { error: 'Debe iniciar sesión para ingresar a la página' })
-        const userRole = req.user.role
+        const userRole = req.session.user.role
         if (acceptedRoles.includes(userRole)) {
             next(); // El usuario tiene el rol necesario, permitir la solicitud
         } else {
