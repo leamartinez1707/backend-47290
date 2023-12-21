@@ -96,7 +96,7 @@ router.post('/forget_password', async (req, res) => {
     }
     try {
         await transporter.sendMail(message)
-        res.json({ status: 'success', message: `Mensaje enviado correctamente a ${email} para reiniciar su contraseña` })
+        res.status(200).render('pageAuth', { message: `Mensaje enviado correctamente a ${email} para reiniciar su contraseña` })
     } catch (err) {
         res.status(500).json({ status: 'error', error: err.message })
     }
@@ -126,7 +126,7 @@ router.post('/reset_password/:user', async (req, res) => {
                 error: 'La contraseña no puede ser la misma que ya está utlizando!'
             })
             await UserModel.findByIdAndUpdate(user._id, { password: createHash(req.body.newPassword) })
-            res.status(200).json({ status: 'success', message: 'Se ha creado una nueva contraseña' })
+            res.status(200).render('pageAuth', { message: 'Se ha creado una nueva contraseña' })
             await UserPasswordModel.deleteOne({ email: req.params.user })
         } else res.status(400).render('pageError', {
             error: 'Las contraseñas ingresadas no coinciden'

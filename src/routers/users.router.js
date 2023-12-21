@@ -14,7 +14,9 @@ router.get('/premium/:email', verifyRoles(['premium', 'user']), async (req, res)
         await UserModel.findOneAndUpdate({ email: user.email, role: user.role === 'user' ? 'premium' : 'user' })
         user = await UserModel.findOne({ email: req.params.email })
         logger.info(`El usuario ${user.email} cambió su rol! Ahora es: ${user.role}`)
-        res.status(200).json({ status: 'success', message: 'Se actualizó el rol del usuario con éxito, para utilizarlo, cierre sesión e ingrese nuevamente!' })
+        res.status(200).render('pageAuth', {
+            message: 'Se actualizó el rol del usuario con éxito, para utilizarlo, cierre sesión e ingrese nuevamente!'
+        })
     } catch (err) {
         res.status(500).json({ status: 'error', error: err.message })
     }

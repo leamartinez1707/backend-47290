@@ -122,7 +122,7 @@ const updateProductController = async (req, res) => {
     if (req.session.user === 'premium') {
         const product = await ProductService.getById(pid)
 
-        if (product.response.payload.owner !== req.session.user.email) return res.status(403).send('Not authorized')
+        if (product.response.payload.owner !== req.session.user.email) return res.status(403).send('No autorizado para editar producto')
     }
     const productToUpdate = req.body
     const result = await ProductService.update(pid, productToUpdate)
@@ -133,11 +133,12 @@ const updateProductController = async (req, res) => {
 }
 const deleteProductController = async (req, res) => {
     const pid = req.params.pid
-    if (req.session.user === 'premium') {
-        const product = await ProductService.getById(pid)
-
-        if (product.response.payload.owner !== req.session.user.email) return res.status(403).send('Not authorized')
+    const product = await ProductService.getById(pid)
+    if (product.statusCode === 404) return res.json({ status: 'error', error: product.response.error })
+    if (req.session.user.role === 'premium') {
+        if (product.response.payload.owner !== req.session.user.email) return res.status(403).json({ status: 'error', error: 'No autorizado, solo el dueño del producto puede borrarlo!' })
     }
+    if (req.session.user.role === 'user') return res.status(403).json({ status: 'error', error: 'No autorizado, solo admin o premium puede utilizar esta funcion' })
     const result = await ProductService.delete(pid)
     if (result.statusCode === 500) {
         return res.status(result.statusCode).send(result.response.error)

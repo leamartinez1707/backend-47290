@@ -110,7 +110,8 @@ const getProductByIdViewController = async (req, res) => {
 
     res.status(200).render("productDetail", {
         product: product.response.payload,
-        user
+        user,
+        premium: user.role === 'premium' || user.role === 'admin' ? true : false
     })
 }
 const getProductsFromCartViewController = async (req, res) => {
