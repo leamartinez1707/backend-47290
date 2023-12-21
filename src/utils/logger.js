@@ -28,8 +28,7 @@ const customLevelsOptions = {
 winston.addColors(customLevelsOptions.colors)
 
 const createLogger = env => {
-    console.log(env)
-    if (env === 'PROD') {
+    if (env === 'production') {
         return winston.createLogger({
             levels: customLevelsOptions.levels,
             transports: [

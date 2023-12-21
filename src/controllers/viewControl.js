@@ -107,6 +107,7 @@ const getProductByIdViewController = async (req, res) => {
             error: 'No pudimos encontrar el producto con este ID!!'
         })
     }
+
     res.status(200).render("productDetail", {
         product: product.response.payload,
         user
@@ -116,7 +117,7 @@ const getProductsFromCartViewController = async (req, res) => {
 
     const cid = req.params.cid
     const cartProducts = await CartService.getAll(cid)
-
+    const user = req.session.user
     if (cartProducts.statusCode === 500) {
 
         logger.error(`El usuario ${req.user.email} quiso acceder al carrito ${cid} y obtuvo un error`)
@@ -129,6 +130,7 @@ const getProductsFromCartViewController = async (req, res) => {
     let finalPrice = amount * 1.2
 
     res.status(cartProducts.statusCode).render("cart", {
+        user,
         cartProducts: cartProducts.response.payload.products,
         cartId: cartProducts.response.payload._id,
         subTotal: Math.round(amount),
@@ -139,7 +141,10 @@ const getProductsFromCartViewController = async (req, res) => {
 const getSessionUser = async (req, res) => {
 
     let user = req.session.user
-    user = new UserDTO(user)
-    res.render('sessions/profile', user)
+    let userDTO = new UserDTO(user)
+    res.render('sessions/profile', {
+        user,
+        userDTO
+    })
 }
 export default { getProductsViewController, getProductByIdViewController, getProductsFromCartViewController, getSessionUser }
