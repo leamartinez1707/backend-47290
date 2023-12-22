@@ -22,4 +22,11 @@ router.get('/premium/:email', verifyRoles(['premium', 'user']), async (req, res)
     }
 })
 
+router.get('/addProduct', verifyRoles(['premium', 'admin']), async (req, res) => {
+
+    res.render('actions/addProduct', {
+        user: req.session.user
+    })
+})
+
 export default router

@@ -78,7 +78,6 @@ const getProductsViewController = async (req, res) => {
         })
     }
     const user = req.session.user
-
     return res.render("home",
         {
             user,
@@ -145,7 +144,8 @@ const getSessionUser = async (req, res) => {
     let userDTO = new UserDTO(user)
     res.render('sessions/profile', {
         user,
-        userDTO
+        userDTO,
+        premium: user.role === 'premium' || user.role === 'admin' ? true : false
     })
 }
 export default { getProductsViewController, getProductByIdViewController, getProductsFromCartViewController, getSessionUser }

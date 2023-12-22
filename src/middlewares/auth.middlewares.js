@@ -25,5 +25,5 @@ export const verifyRoles = (acceptedRoles) => {
             logger.error(`El usuario ${req.user.email} quiso ingresar a una página que tiene permisos.`)
             return res.status(403).render('pageAuth'); // 403 Forbidden si no tiene el rol necesario
         }
-    };
-};
+    }
+}

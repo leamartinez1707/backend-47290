@@ -45,7 +45,6 @@ const getProducts = async (req, res) => {
     } else {
         nextLink = `http://${req.hostname}:8080${req.originalUrl}&page=${result.nextPage}`
     }
-
     return res.send({
         statusCode: 200,
         response: {
@@ -97,7 +96,9 @@ const addProductController = async (req, res) => {
         })
         logger.error(`El producto ${code} no se pudo crear debido a que faltan propiedades.`)
 
-        return res.status(400).send(error)
+        return res.status(400).render('pageError', {
+            error: error.message
+        })
     } else {
         if (req.session.user) {
             product.owner = req.session.user.email
@@ -111,9 +112,13 @@ const addProductController = async (req, res) => {
                 code: EErros.PRODUCT_CODE
             })
             logger.error(error.message)
-            return res.status(result.statusCode).send(error.message)
+            return res.status(result.statusCode).render('pageError', {
+                error: error.message
+            })
         }
-        res.status(result.statusCode).send(result.response.payload)
+        res.status(result.statusCode).render('pageAuth', {
+            message: 'Producto agregado con éxito'
+        })
     }
 }
 const updateProductController = async (req, res) => {
