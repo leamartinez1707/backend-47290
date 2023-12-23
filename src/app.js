@@ -16,10 +16,10 @@ import config from './config/config.js'
 import mockingRouter from './routers/mocking.router.js'
 import errorHandler from './middlewares/errors.js'
 import logger from './utils/logger.js'
-
-
 import passport from 'passport'
 import initializePassport from './config/passport.config.js'
+import swaggerJSDoc from 'swagger-jsdoc'
+import swaggerUiExpress from 'swagger-ui-express'
 
 const app = express();
 
@@ -57,6 +57,19 @@ try {
         dbName: config.mongo_db_name
     })
     logger.info('Conectado a la DB')
+
+    const swaggerOptions = {
+        definition: {
+            openapi: '3.0.1',
+            info: {
+                title: "elem Shop | Tienda de ropa",
+                description: "API pensada para una tienda de ropa."
+            }
+        },
+        apis: ['./docs/**/*.yaml']
+    }
+    const specs = swaggerJSDoc(swaggerOptions);
+    app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 
     // App funciona como servidor web, escuchamos las peticiones en el puerto 8080
     const httpsrv = app.listen(config.port, () => logger.info(`Server is up at Port: ${config.port} !!`))

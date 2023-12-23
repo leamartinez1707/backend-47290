@@ -1,0 +1,48 @@
+paths:
+  /api/carts/{cid}:
+    get:
+      summary: Obtiene un carrito a partir del ID pasado por parámetro.
+      tags:
+        - Carts
+      parameters:
+      - name: cid
+        in: path
+        required: true
+        description: ID del carrito que desea buscar.
+        schema:
+          $type: String
+      responses:
+        "200":
+          description: Los carritos fueron obtenidos satisfactoriamente desde la base de datos!
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Carrito"
+        "500":
+          description: Error interno en el servidor
+  /api/carts/:
+    post:
+      summary: Registra un nuevo carrito en la base de datos
+      tags:
+        - Carts
+      response:
+        "200":
+          description: El nuevo carrito se registró con éxito
+        "500":
+          description: Error interno en el servidor
+components:
+  schemas:
+    Carrito:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Id autogenerada por MongoDB
+        products:
+          type: Array
+          description: Productos agregados al carrito
+      example:
+        _id: ObjectId("65824f2444b4ccba0ad1d959")
+        products: []

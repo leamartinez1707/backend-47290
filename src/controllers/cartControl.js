@@ -1,6 +1,8 @@
 import { CartService, ProductService } from '../services/index.js'
 import ticketModel from '../dao/models/ticket.model.js'
 import { nanoid } from 'nanoid'
+import nodemailer from 'nodemailer'
+import config from '../config/config.js'
 
 const getProductsFromCartController = async (req, res) => {
     const cid = req.params.cid
@@ -118,6 +120,38 @@ const purchaseCartController = async (req, res) => {
             amount,
             purchaser: req.session.user.email
         })
+
+        const mailConfig = {
+            service: 'gmail',
+            auth: { user: config.nodemailer_user, pass: config.nodemailer_pass }
+        }
+        let transporter = nodemailer.createTransport(mailConfig)
+        let message = {
+            from: config.nodemailer_user,
+            to: email,
+            subject: '[ elem Shop ] Orden de compra',
+            html: `<h1>[Nueva contraseña] eleM | Tienda de ropa</h1>
+            <hr />
+            Has pedido un reinicio de contraseña. Lo puedes hacer desde el siguiente link: <a href="http://${req.hostname}:${config.port}/reset_password/${token}"
+            >http://${req.hostname}:${config.port}/reset_password/${token}</a>
+            <hr />
+            Saludos,<br><strong>Equipo de eleM Uruguay.</strong>`
+        }
+        try {
+            await transporter.sendMail(message)
+            res.status(200).render('pageAuth', { message: `Mensaje enviado correctamente a ${email} para reiniciar su contraseña` })
+        } catch (err) {
+            res.status(500).json({ status: 'error', error: err.message })
+        }
+
+
+
+
+
+
+
+
+
 
         return res.status(201).render('checkoutRes', {
             purchaseCode: ticket.code,
