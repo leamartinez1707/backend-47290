@@ -17,9 +17,9 @@
     <div class="mx-auto max-w-5xl justify-center px-6 md:flex md:space-x-6 xl:px-0">
         <div class="rounded-lg md:w-2/3">
             {{#each cartProducts}}
-            <div class="justify-between mb-6 rounded-lg bg-white p-6 shadow-md sm:flex sm:justify-start">
+            <div class="justify-between mb-6 rounded-lg bg-white p-6 shadow-md md:flex md:flex-col md:justify-between lg:justify-start lg:flex-row">
                 <img src="{{this.product.thumbnail}}" alt="{{this.product.title}}"
-                    class="w-full object-cover h-40 lg:w-50 rounded-lg sm:w-40" />
+                    class="object-cover w-48 lg:w-50 rounded-lg sm:w-40" />
                 <div class="sm:ml-4 sm:flex sm:w-full sm:justify-between">
                     <div class="mt-5 sm:mt-0">
                         <h2 class="text-lg font-bold text-gray-900">{{this.product.title}}</h2>

@@ -9,7 +9,7 @@ const router = Router()
 router.get('/', verifyRoles(['admin', 'user', 'premium']), productControl.getProducts)
 // verifyRoles(['user', 'admin'])
 router.get('/:pid', verifyRoles(['user', 'admin', 'premium']), productControl.getProductByIdController)
-router.post('/',  productControl.addProductController)
+router.post('/', verifyRoles(['user', 'premium']), productControl.addProductController)
 // , verifyRoles(['user'])verifyRoles(['premium']),
 router.put('/:pid', verifyRoles(['admin', 'premium']), productControl.updateProductController)
 router.delete('/:pid', verifyRoles(['admin', 'premium']), productControl.deleteProductController)

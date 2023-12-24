@@ -7,11 +7,13 @@ import logger from "../utils/logger.js"
 const router = Router()
 
 router.get('/', privateRoutes, (req, res) => {
+    res.render('sessions/welcome')
+})
+router.get('/login', privateRoutes, (req, res) => {
 
     res.render('sessions/login')
 
 })
-
 router.get('/register', privateRoutes, async (req, res) => {
     res.render('sessions/register')
 })
@@ -50,6 +52,10 @@ router.get('/forget_password', (req, res) => {
 
 router.get('/reset_password/:token', (req, res) => {
     res.redirect(`/session/verify_token/${req.params.token}`)
+})
+
+router.get('/api/products', (req, res) => {
+    res.render('pageAuth')
 })
 
 

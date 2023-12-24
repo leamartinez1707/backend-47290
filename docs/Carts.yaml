@@ -13,7 +13,7 @@ paths:
           $type: String
       responses:
         "200":
-          description: Los carritos fueron obtenidos satisfactoriamente desde la base de datos!
+          description: El carrito se obtuvo satisfactoriamente de la base de datos!
           content:
             application/json:
               schema:

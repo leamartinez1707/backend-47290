@@ -83,9 +83,7 @@ const getProductByIdController = async (req, res) => {
 }
 const addProductController = async (req, res) => {
     let { title, description, price, code, category, stock, thumbnail } = req.body
-
     const product = { title, description, price, code, category, stock, thumbnail }
-
     if (!title || !description || !price || !code || !category || !stock || !thumbnail) {
 
         const error = CustomError.createError({
@@ -116,9 +114,11 @@ const addProductController = async (req, res) => {
                 error: error.message
             })
         }
-        res.status(result.statusCode).render('pageAuth', {
-            message: 'Producto agregado con éxito'
-        })
+        logger.info(`El producto ${product.code} fue creado con éxito por el usuario ${req.session.user.email}`)
+        res.status(result.statusCode).json({ status: 'success', payload: result })
+        // .render('pageAuth', {
+        //     message: 'Producto agregado con éxito'
+        // })
     }
 }
 const updateProductController = async (req, res) => {
