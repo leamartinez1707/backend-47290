@@ -44,25 +44,16 @@ export default class CartDao {
         try {
             // BUSCAR EL CARRITO CON EL ID QUE SE LE PASO POR PARAMETRO
             let cart = await this.model.findById(cid).lean()
-            // if (cart === null) return {
-            //     statusCode: 404,
-            //     response: {
-            //         status: 'error', error: `Cart "${cid}" was not found`
-            //     }
-            // }
             // CARRITO VACIO
             cart.products = []
-
             // ACTUALIZAR EL CARRITO EN LA BASE DE DATOS 
             const result = await this.model.findByIdAndUpdate(cid, cart, { Document: 'after' }).lean()
-
             return {
                 statusCode: 200,
                 response: {
                     status: 'success', payload: result
                 }
             }
-            // return res.status(200).json({ status: 'success', payload: result })
 
         } catch (err) {
             return {
@@ -91,15 +82,17 @@ export default class CartDao {
                 // return res.status(404).json({ status: 'error', error: `Cart "${cid}" was not found` })
             }
             // CREAR UN NUEVO BODY DEL CARRITO CON LOS PARAMETROS PASADOS EN BODY
-            let newCart = data
+            let products = data
 
             // VALIDA SI EXISTE EL ARRAY DE PRODUCTOS NUEVO PASADO POR BODY
-            if (!newCart) return {
+            if (!products) return {
                 statusCode: 400,
                 response: {
                     status: 'error', error: 'Products is required'
                 }
             }
+            let newCart = []
+            newCart.push(products)
             // res.status(400).json({ status: 'error', error: 'Field products is required' })
 
             // VALIDACIONES PARA VERIFICAR SI LOS DATOS DEL BODY SON CORRECTOS
@@ -167,7 +160,7 @@ export default class CartDao {
 
     create = async () => {
         try {
-            const result = await this.model.create({}).lean()
+            const result = await this.model.create({})
             return {
                 statusCode: 201,
                 response: {

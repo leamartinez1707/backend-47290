@@ -3,6 +3,7 @@ import ticketModel from '../dao/models/ticket.model.js'
 import { nanoid } from 'nanoid'
 import nodemailer from 'nodemailer'
 import config from '../config/config.js'
+import logger from '../utils/logger.js'
 
 const getProductsFromCartController = async (req, res) => {
     const cid = req.params.cid
@@ -23,8 +24,9 @@ const deleteFromCartController = async (req, res) => {
 }
 
 const updateCartController = async (req, res) => {
+    const data = req.body
     const cid = req.params.cid
-    const result = await CartService.update(cid)
+    const result = await CartService.update(cid, data)
     if (result.statusCode === 500) {
         return res.status(result.statusCode).send(result.response.error)
     }
@@ -33,6 +35,7 @@ const updateCartController = async (req, res) => {
 
 const createCartController = async (req, res) => {
     const result = await CartService.create()
+    console.log(result)
     if (result.statusCode === 500) {
         return res.status(result.statusCode).send(result.response.error)
     }
@@ -126,39 +129,39 @@ const purchaseCartController = async (req, res) => {
             auth: { user: config.nodemailer_user, pass: config.nodemailer_pass }
         }
         let transporter = nodemailer.createTransport(mailConfig)
+
+        // let tableProducts = ticket.products.forEach(prd => {
+        //     `
+        //         <tr>
+        //         <td>${prd._id}</td>
+        //         <td>${prd.title}</td>
+        //         <td>$ ${prd.price}</td>
+        //         </tr>
+        //         `
+        // })
+        let email = req.session.user.email
         let message = {
             from: config.nodemailer_user,
             to: email,
             subject: '[ elem Shop ] Orden de compra',
-            html: `<h1>[Nueva contraseña] eleM | Tienda de ropa</h1>
+            html: `<h1>[Orden de compra] eleM | Tienda de ropa online</h1>
             <hr />
-            Has pedido un reinicio de contraseña. Lo puedes hacer desde el siguiente link: <a href="http://${req.hostname}:${config.port}/reset_password/${token}"
-            >http://${req.hostname}:${config.port}/reset_password/${token}</a>
+            <h2> Usted a realizado una compra en nuestra tienda </h2>
+            <p>Número de ticket: ${ticket.code}</p>
+            <p>Total de la compra: $ ${ticket.amount}</p>
             <hr />
             Saludos,<br><strong>Equipo de eleM Uruguay.</strong>`
         }
-        try {
-            await transporter.sendMail(message)
-            res.status(200).render('pageAuth', { message: `Mensaje enviado correctamente a ${email} para reiniciar su contraseña` })
-        } catch (err) {
-            res.status(500).json({ status: 'error', error: err.message })
-        }
-
-
-
-
-
-
-
-
-
-
-        return res.status(201).render('checkoutRes', {
+        await transporter.sendMail(message)
+        logger.info(`El usuario ${email} a realizado una compra de ${ticket.amount}`)
+        return res.status(200).render('checkoutRes', {
+            user: req.session.user,
             purchaseCode: ticket.code,
             noStockProducts: productsAfterPurchase,
             purchaseAmount: ticket.amount,
             purchaseBuyer: ticket.purchaser,
-            purchaseSubTotal: ticket.amount * 0.8
+            purchaseSubTotal: ticket.amount * 0.8,
+            message: `Mensaje enviado a ${email}.`
         })
     } catch (error) {
         return res.status(500).send(error.message)

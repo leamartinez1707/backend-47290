@@ -123,7 +123,7 @@ const addProductController = async (req, res) => {
 }
 const updateProductController = async (req, res) => {
     const pid = req.params.pid
-
+    if (!pid) return res.status(400).json({ status: 'error', error: 'ID solicitado no disponible' })
     if (req.session.user === 'premium') {
         const product = await ProductService.getById(pid)
 
@@ -134,7 +134,8 @@ const updateProductController = async (req, res) => {
     if (result.statusCode === 500) {
         return res.status(result.statusCode).send(result.response.error)
     }
-    res.status(result.statusCode).send(result.response.payload)
+    console.log(result)
+    res.status(result.statusCode).send(result)
 }
 const deleteProductController = async (req, res) => {
     const pid = req.params.pid

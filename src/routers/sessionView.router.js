@@ -54,9 +54,5 @@ router.get('/reset_password/:token', (req, res) => {
     res.redirect(`/session/verify_token/${req.params.token}`)
 })
 
-router.get('/api/products', (req, res) => {
-    res.render('pageAuth')
-})
-
 
 export default router

@@ -57,6 +57,52 @@ paths:
                   $ref: "#/components/schemas/Producto"
         "500":
           description: Error interno en el servidor
+    put:
+      summary: Modificar un producto a partir del ID pasado por parámetro.
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: ID del producto que desea modificar.
+          schema:
+            $type: String
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/requestBodies/productData"
+      responses:
+        "200":
+          description: El producto se modificó con éxito
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Producto"
+        "500":
+          description: Error interno en el servidor
+    delete:
+      summary: Borrar un producto de la base de datos, a partir del ID pasado por parámetro.
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: ID del producto que desea borrar.
+          schema:
+            $type: String
+      responses:
+        "200":
+          description: El producto se borró con éxito
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Producto"
+        "500":
+          description: Error interno en el servidor
 components:
   schemas:
     Producto:

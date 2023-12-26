@@ -113,18 +113,10 @@
 </section>
 <script>
     // Swal.fire
-    function swalDelete() {
+    function swalUpdate() {
         Swal.fire({
-            title: `Producto borrado!!`,
-            text: "Se borró el producto correctamente",
-            icon: "warning"
-        })
-    }
-    // Swal.fire
-    function swalAdded() {
-        Swal.fire({
-            title: `Producto agregado!!`,
-            text: "Se agregó el producto correctamente",
+            title: `Producto modificado!!`,
+            text: "Se modificó el producto correctamente",
             icon: "success"
         })
     }
@@ -159,7 +151,7 @@
     function deleteProduct(pid) {
 
         fetch(`/api/products/${pid}`, {
-            method: 'delete'
+            method: 'put'
         })
             .then(result => result.json())
             .then(result => {

@@ -10,7 +10,7 @@ router.get('/:cid/purchase', cartControl.purchaseCartController)
 router.delete('/:cid', cartControl.deleteFromCartController)
 router.put('/:cid', cartControl.updateCartController)
 router.post('/', cartControl.createCartController)
-router.post('/:cid/product/:pid', verifyRoles(['user']), cartControl.addProductToCartController)
+router.post('/:cid/product/:pid', verifyRoles(['user','premium']), cartControl.addProductToCartController)
 router.delete('/:cid/product/:pid', cartControl.deleteProductFromCartController)
 router.put('/:cid/product/:pid', cartControl.updateProductFromCartController)
 
