@@ -9,7 +9,6 @@ export default class CartDao {
     }
     getProductsFromCartId = async (cid) => {
         try {
-            // const cid = req.params.cid
             let cart = await this.model.findById(cid).populate('products.product').lean()
 
             if (!cart) {
@@ -242,15 +241,19 @@ export default class CartDao {
             let product = await this.modelProduct.findById(pid).lean()
 
             if (product === null) return {
-                statusCode: 400,
-                response: { status: 'error', error: `Product "${pid}" was not found` }
+                statusCode: 404,
+                response: { status: 'error', error: `Product "${pid}" does not exist` }
             }
 
             // ---> CREAR UNA VERIFICACION DONDE SI EL PRODUCTO NO ES ENCONTRADO DE UN ERROR
-
+            let filter = cart.products.find((prd) => prd.product.toString() === pid)
+            // ---> CREAR UNA VERIFICACION DONDE SI EL PRODUCTO NO ES ENCONTRADO EN EL CARRITO DE UN ERROR
+            if (!filter) return {
+                statusCode: 404,
+                response: { status: 'error', error: `Product "${pid}" was not found in cart "${cid}"` }
+            }
             // FILTRAR LOS PRODUCTOS DEL CARRITO Y ELIMINAR EL PRODUCTO OBTENIDO ANTERIORMENTE
             cart.products = cart.products.filter(prd => prd.product.toString() !== pid)
-
             if (!cart.products) return {
                 statusCode: 400,
                 response: { status: 'error', error: `Product "${pid}" in cart ${cid} was not found` }

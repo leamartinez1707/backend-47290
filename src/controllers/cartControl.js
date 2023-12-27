@@ -46,8 +46,15 @@ const addProductToCartController = async (req, res) => {
 
     const cid = req.params.cid
     const pid = req.params.pid
-    if (req.session.user === 'premium') {
-        const product = await ProductService.getById(pid)
+    const cart = await CartService.getAll(cid)
+    const product = await ProductService.getById(pid)
+
+    if (cart.statusCode === 500 || cart.statusCode === 400 || cart.statusCode === 404) return res.status(400).json({ status: 'error', error: cart.response.error })
+    // VALIDA QUE EL CARRITO Y EL PRODUCTO EXISTAN SEGUN LOS PARAMETROS OBTENIDOS
+    if (product.statusCode === 500 || product.statusCode === 400 || product.statusCode === 404) return res.status(400).json({ status: 'error', error: product.response.error })
+
+    // SI EL USUARIO TIENE UN ROL PREMIUM, VERIFICA QUE NO ESTÉ COMPRANDO UN PRODUCTO CREADO POR ÉL.
+    if (req.session.user.role === 'premium') {
         if (product.response.payload.owner === req.session.user.email) return res.status(403).json({ status: 'error', error: 'You cannot buy your own products' })
     }
     const result = await CartService.addToCart(cid, pid)
@@ -63,7 +70,7 @@ const deleteProductFromCartController = async (req, res) => {
     const cid = req.params.cid
     const pid = req.params.pid
     const result = await CartService.deleteProductFromCartService(cid, pid)
-    if (result.statusCode === 500) {
+    if (result.statusCode === 500 || result.statusCode === 400 || result.statusCode === 404) {
         return res.status(result.statusCode).send(result.response.error)
     }
     res.status(result.statusCode).send(result.response.payload)

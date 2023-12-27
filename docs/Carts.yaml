@@ -52,7 +52,7 @@ paths:
           required: true
           description: ID del carrito que desea modificar.
           schema:
-            $type: String
+            type: String
       requestBody:
         required: true
         content:
@@ -82,6 +82,59 @@ paths:
               $ref: "#/components/schemas/Carrito"
         "500":
           description: Error interno en el servidor
+  /api/carts/{cid}/product/{pid}:
+    delete:
+      summary: Eliminar un producto de un carrito especifico
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: ID del carrito que desea modificar.
+          schema:
+            $type: String
+        - name: pid
+          in: path
+          required: true
+          description: ID del producto que desea eliminar.
+          schema:
+            $type: String
+      responses:
+        "200":
+          description: El producto se eliminó correctamente
+          content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Carrito"
+        "500":
+          description: Error interno en el servidor
+    post:
+      summary: Agrega un producto al carrito especificado
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: ID del carrito
+          schema:
+            type: string
+        - name: pid
+          in: path
+          required: true
+          description: ID del producto a agregar
+          schema:
+            type: string
+      responses:
+        "201":
+          description: El nuevo producto se agregó con éxito
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Carrito"
+        "500":
+          description: Error interno en el servidor
 components:
   schemas:
     Carrito:
@@ -107,3 +160,6 @@ components:
         quantity:
           type: Number
           description: Cantidad de productos
+    productData:
+      type: object
+      properties:
