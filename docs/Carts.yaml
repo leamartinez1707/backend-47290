@@ -23,14 +23,14 @@ paths:
         "500":
           description: Error interno en el servidor
     delete:
-      summary: Elimina un carrito a partir del ID pasado por parámetro.
+      summary: Vacia los productos de un carrito a partir del ID pasado por parámetro.
       tags:
         - Carts
       parameters:
         - name: cid
           in: path
           required: true
-          description: ID del carrito que desea eliminar.
+          description: ID del carrito.
           schema:
             $type: String
       responses:
@@ -52,13 +52,29 @@ paths:
           required: true
           description: ID del carrito que desea modificar.
           schema:
-            type: String
+            $type: String
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/requestBodies/cartData"
+              type: object
+              properties:
+                products:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      product:
+                        type: string
+                        format: ObjectId
+                        description: ID del producto
+                      quantity:
+                        type: number
+        # content:
+        #   application/json:
+        #     schema:
+        #       $ref: "#/components/requestBodies/cartData"
       responses:
         "200":
           description: El carrito se modificó con éxito
@@ -135,6 +151,41 @@ paths:
                 $ref: "#/components/schemas/Carrito"
         "500":
           description: Error interno en el servidor
+    put:
+      summary: Modifica la cantidad agregada de un producto en el carrito pasado por parámetro.
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: ID del carrito que desea modificar.
+          schema:
+            $type: String
+        - name: pid
+          in: path
+          required: true
+          description: ID del producto que desea modificar.
+          schema:
+            $type: String
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: number
+      responses:
+        "200":
+          description: El producto se modificó con éxito
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Carrito"
+        "500":
+          description: Error interno en el servidor
 components:
   schemas:
     Carrito:
@@ -148,18 +199,14 @@ components:
           description: Productos agregados al carrito
       example:
         _id: ObjectId("65824f2444b4ccba0ad1d959")
-        products:
-          [{ "product": { _id: "6583c3f9f3a2c28a2e9a036c" }, "quantity": 2 }]
+        products: [{ "product": "6583c3f9f3a2c28a2e9a036c", "quantity": 2 }]
   requestBodies:
     cartData:
       type: object
       properties:
         product:
-          type: ObjectId
+          type: String
           description: ID del producto
         quantity:
           type: Number
           description: Cantidad de productos
-    productData:
-      type: object
-      properties:

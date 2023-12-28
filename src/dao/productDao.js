@@ -34,14 +34,13 @@ export default class ProductDao {
             const result = await this.model.findOne({ _id: pid }).lean()
             if (!result || result === null) return {
                 statusCode: 404,
-                response: { status: 'error', error: 'Product does not exists' }
+                response: { status: 'error', error: 'Product does not exist' }
             }
             return {
                 statusCode: 200,
                 response: { status: 'success', payload: result }
             }
         } catch (error) {
-            console.log(error)
             return {
                 statusCode: 500,
                 response: { status: 'error', error: `Product ${pid} does not exist or invalid ID` }

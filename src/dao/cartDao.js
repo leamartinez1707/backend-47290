@@ -71,7 +71,6 @@ export default class CartDao {
 
             // BUSCAR EL CARRITO CON EL ID QUE SE LE PASO POR PARAMETRO
             let cart = await this.model.findById(cid).lean()
-
             if (cart === null) return {
                 statusCode: 404,
                 response: {
@@ -80,9 +79,9 @@ export default class CartDao {
 
                 // return res.status(404).json({ status: 'error', error: `Cart "${cid}" was not found` })
             }
-            // CREAR UN NUEVO BODY DEL CARRITO CON LOS PARAMETROS PASADOS EN BODY
             let products = data
-
+            let newCart
+            // CREAR UN NUEVO BODY DEL CARRITO CON LOS PARAMETROS PASADOS EN BODY
             // VALIDA SI EXISTE EL ARRAY DE PRODUCTOS NUEVO PASADO POR BODY
             if (!products) return {
                 statusCode: 400,
@@ -90,8 +89,13 @@ export default class CartDao {
                     status: 'error', error: 'Products is required'
                 }
             }
-            let newCart = []
-            newCart.push(products)
+            newCart = products
+            // if (products.length > 0) {
+            //     newCart
+            // } else {
+            //     newCart.push(products)
+            // }
+            console.log(newCart)
             // res.status(400).json({ status: 'error', error: 'Field products is required' })
 
             // VALIDACIONES PARA VERIFICAR SI LOS DATOS DEL BODY SON CORRECTOS
@@ -141,7 +145,7 @@ export default class CartDao {
             return {
                 statusCode: 200,
                 response: {
-                    status: 'success', payload: cart
+                    status: 'success', payload: cart.products
                 }
             }
             // res.status(200).json({ status: 'success', payload: result })
@@ -149,7 +153,7 @@ export default class CartDao {
             return {
                 statusCode: 500,
                 response: {
-                    status: 'error', payload: err.message
+                    status: 'error', payload: err
                 }
 
                 // res.status(500).json({ status: 'error', payload: err.message })
@@ -279,8 +283,7 @@ export default class CartDao {
         try {
             // BUSCAR EL CARRITO CON EL ID QUE SE LE PASO POR PARAMETRO
             let cart = await this.model.findById(cid).lean()
-
-            if (cart === null) {
+            if (cart === null || !cart) {
                 return {
                     statusCode: 400,
                     response: { status: 'error', error: `Cart "${cid}" was not found` }
@@ -321,6 +324,7 @@ export default class CartDao {
 
             // ACTUALIZAR EL CARRITO EN LA BASE DE DATOS, SIN EL PRODUCTO ANTERIORMENTE BORRADO
             let result = await this.model.findByIdAndUpdate(cid, cart, { Document: 'after' }).lean()
+            console.log(result)
             cart = await this.model.findById(cid).lean()
             if (!result) return {
                 statusCode: 400,
@@ -334,7 +338,7 @@ export default class CartDao {
         } catch (err) {
             return {
                 statusCode: 500,
-                response: { status: 'error', payload: err.message }
+                response: { status: 'error', payload: err }
             }
         }
 

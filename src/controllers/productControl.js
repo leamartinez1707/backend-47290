@@ -77,7 +77,7 @@ const getProductByIdController = async (req, res) => {
         } catch (err) {
             logger.error(err)
         }
-        res.status(result.statusCode).send('Producto no encontrado')
+        res.status(result.statusCode).send(result.response.error)
     }
     res.send(result.response.payload)
 }
@@ -134,19 +134,18 @@ const updateProductController = async (req, res) => {
     if (result.statusCode === 500) {
         return res.status(result.statusCode).send(result.response.error)
     }
-    console.log(result)
     res.status(result.statusCode).send(result)
 }
 const deleteProductController = async (req, res) => {
     const pid = req.params.pid
     const product = await ProductService.getById(pid)
-    if (product.statusCode === 404) return res.json({ status: 'error', error: product.response.error })
+    if (product.statusCode === 404 || product.statusCode === 500) return res.json({ status: 'error', error: product.response.error })
     if (req.session.user.role === 'premium') {
         if (product.response.payload.owner !== req.session.user.email) return res.status(403).json({ status: 'error', error: 'No autorizado, solo el dueño del producto puede borrarlo!' })
     }
     if (req.session.user.role === 'user') return res.status(403).json({ status: 'error', error: 'No autorizado, solo admin o premium puede utilizar esta funcion' })
     const result = await ProductService.delete(pid)
-    if (result.statusCode === 500) {
+    if (result.statusCode === 500 || result.statusCode === 400 ) {
         return res.status(result.statusCode).send(result.response.error)
     }
     res.status(result.statusCode).send(result.response.payload)

@@ -17,6 +17,7 @@ const getProductsFromCartController = async (req, res) => {
 const deleteFromCartController = async (req, res) => {
     const cid = req.params.cid
     const result = await CartService.delete(cid)
+    console.log(result)
     if (result.statusCode === 500) {
         return res.status(result.statusCode).send(result.response.error)
     }
@@ -24,9 +25,10 @@ const deleteFromCartController = async (req, res) => {
 }
 
 const updateCartController = async (req, res) => {
-    const data = req.body
+    const data = req.body.products
     const cid = req.params.cid
     const result = await CartService.update(cid, data)
+    console.log(result)
     if (result.statusCode === 500) {
         return res.status(result.statusCode).send(result.response.error)
     }
@@ -35,7 +37,6 @@ const updateCartController = async (req, res) => {
 
 const createCartController = async (req, res) => {
     const result = await CartService.create()
-    console.log(result)
     if (result.statusCode === 500) {
         return res.status(result.statusCode).send(result.response.error)
     }
@@ -82,7 +83,7 @@ const updateProductFromCartController = async (req, res) => {
     const data = req.body.quantity
     const result = await CartService.updateProductFromCartService(cid, pid, data)
     if (result.statusCode === 500) {
-        return res.status(result.statusCode).send(result.response.error)
+        return res.status(result.statusCode).send(result)
     }
     res.status(result.statusCode).send(result.response)
 }
