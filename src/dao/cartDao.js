@@ -218,7 +218,7 @@ export default class CartDao {
             await this.model.findByIdAndUpdate(cid, cart, { Document: 'after' })
             cart = await this.model.findById(cid).lean()
             return {
-                statusCode: 201,
+                statusCode: 200,
                 response: { status: 'success', payload: cart }
             }
 
