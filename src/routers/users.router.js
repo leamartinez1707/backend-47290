@@ -6,13 +6,15 @@ import logger from '../utils/logger.js'
 
 const router = Router()
 
-router.get('/premium/:email', verifyRoles(['premium', 'user']), async (req, res) => {
-    console.log('entro aca')
+router.get('/premium/:uid', verifyRoles(['premium', 'user']), async (req, res) => {
+    
     try {
-        let user = await UserModel.findOne({ email: req.params.email })
+        console.log(req.params.uid)
+        let user = await UserModel.findOne({ _id: req.params.uid })
         if (!user) return res.redirect('/')
-        await UserModel.findOneAndUpdate({ email: user.email, role: user.role === 'user' ? 'premium' : 'user' })
-        user = await UserModel.findOne({ email: req.params.email })
+        console.log(user)
+        await UserModel.findOneAndUpdate({ _id: user._id, role: user.role === 'user' ? 'premium' : 'user' })
+        user = await UserModel.findOne({ _id: req.params.uid })
         logger.info(`El usuario ${user.email} cambió su rol! Ahora es: ${user.role}`)
         res.status(200).render('pageAuth', {
             message: 'Se actualizó el rol del usuario con éxito, para utilizarlo, cierre sesión e ingrese nuevamente!'

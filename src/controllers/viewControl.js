@@ -78,9 +78,12 @@ const getProductsViewController = async (req, res) => {
         })
     }
     const user = req.session.user
+    const userID = req.user._id.toString()
+
     return res.render("home",
         {
             user,
+            userID,
             products: result.docs,
             paginateInfo: {
                 totalPages,
@@ -99,6 +102,7 @@ const getProductByIdViewController = async (req, res) => {
 
     const pid = req.params.pid
     const user = req.session.user
+    const userID = req.user._id.toString()
     const product = await ProductService.getById(pid)
     if (product.statusCode === 500) {
         logger.error(`El usuario ${req.user.email} quiso ver el detalle del producto ${pid} y este no existe`)
@@ -110,6 +114,7 @@ const getProductByIdViewController = async (req, res) => {
     res.status(200).render("productDetail", {
         product: product.response.payload,
         user,
+        userID,
         premium: user.role === 'premium' || user.role === 'admin' ? true : false
     })
 }
@@ -118,6 +123,7 @@ const getProductsFromCartViewController = async (req, res) => {
     const cid = req.params.cid
     const cartProducts = await CartService.getAll(cid)
     const user = req.session.user
+    const userID = req.user._id.toString()
     if (cartProducts.statusCode === 500) {
 
         logger.error(`El usuario ${req.user.email} quiso acceder al carrito ${cid} y obtuvo un error`)
@@ -131,6 +137,7 @@ const getProductsFromCartViewController = async (req, res) => {
 
     res.status(cartProducts.statusCode).render("cart", {
         user,
+        userID,
         cartProducts: cartProducts.response.payload.products,
         cartId: cartProducts.response.payload._id,
         subTotal: Math.round(amount),
@@ -140,10 +147,12 @@ const getProductsFromCartViewController = async (req, res) => {
 }
 const getSessionUser = async (req, res) => {
 
-    let user = req.session.user
-    let userDTO = new UserDTO(user)
+    const user = req.session.user
+    const userID = req.user._id.toString()
+    const userDTO = new UserDTO(user)
     res.render('sessions/profile', {
         user,
+        userID,
         userDTO,
         premium: user.role === 'premium' || user.role === 'admin' ? true : false
     })

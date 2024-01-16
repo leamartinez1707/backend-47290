@@ -16,7 +16,6 @@ router.post('/register', passport.authenticate('register', {
     successRedirect: '/session/registerAccepted'
 }), async (req, res) => {
 
-    console.log(req.user)
 })
 
 router.post('/login', passport.authenticate('login', { failureRedirect: '/session/errorLogin' }), async (req, res) => {

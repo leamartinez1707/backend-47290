@@ -134,6 +134,13 @@
             icon: "warning"
         })
     }
+    function swalDelete(error) {
+        Swal.fire({
+            title: `Eliminado correctamente!`,
+            text: error,
+            icon: "success"
+        })
+    }
     function addToCart(pid) {
 
         let cart_id = document.getElementById('cart_id').innerHTML
@@ -151,7 +158,10 @@
     function deleteProduct(pid) {
 
         fetch(`/api/products/${pid}`, {
-            method: 'put'
+            method: 'DELETE',
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8' // Indicates the content 
+            }
         })
             .then(result => result.json())
             .then(result => {
