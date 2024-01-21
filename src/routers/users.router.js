@@ -1,19 +1,17 @@
 import { Router } from 'express'
 import UserModel from '../dao/models/user.model.js'
 import { verifyRoles } from '../middlewares/auth.middlewares.js'
-import { publicRoutes } from '../middlewares/auth.middlewares.js'
 import logger from '../utils/logger.js'
 
 const router = Router()
 
 router.get('/premium/:uid', verifyRoles(['premium', 'user']), async (req, res) => {
-    
+
     try {
         console.log(req.params.uid)
         let user = await UserModel.findOne({ _id: req.params.uid })
         if (!user) return res.redirect('/')
-        console.log(user)
-        await UserModel.findOneAndUpdate({ _id: user._id, role: user.role === 'user' ? 'premium' : 'user' })
+        await UserModel.findOneAndUpdate({ _id: user._id }, { role: user.role === 'user' ? 'premium' : 'user' })
         user = await UserModel.findOne({ _id: req.params.uid })
         logger.info(`El usuario ${user.email} cambió su rol! Ahora es: ${user.role}`)
         res.status(200).render('pageAuth', {
