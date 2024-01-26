@@ -1,6 +1,6 @@
 import { Router } from "express";
 import viewControl from "../controllers/viewControl.js";
-import { publicRoutes } from "../middlewares/auth.middlewares.js"
+import { publicRoutes, privateRoutes } from "../middlewares/auth.middlewares.js"
 import { verifyRoles } from "../middlewares/auth.middlewares.js";
 
 
@@ -13,6 +13,9 @@ router.get('/real/realtimeproducts', publicRoutes, verifyRoles(['user', 'admin',
     res.render("realTimeProducts")
 })
 
+
+// CORREGIR ESTE ROUTER YA QUE NO DEJA INGRESAR, VERIFICAR LA RUTA /USERS
+router.get('/get', publicRoutes, verifyRoles(['admin', 'user']), viewControl.getUsers)
 
 
 export default router

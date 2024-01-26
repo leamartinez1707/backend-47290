@@ -1,4 +1,5 @@
-import { CartService, ProductService } from '../services/index.js'
+import { CartService, ProductService, UserService } from '../services/index.js'
+import userModel from '../dao/models/user.model.js'
 import UserDTO from "../dto/userDTO.js"
 import logger from '../utils/logger.js'
 import dotenv from 'dotenv'
@@ -28,10 +29,6 @@ const getProductsViewController = async (req, res) => {
         })
     }
     let previousLink
-
-    if (!req.query.page) {
-
-    }
 
     if (req.query.page) {
 
@@ -73,9 +70,7 @@ const getProductsViewController = async (req, res) => {
     }
 
     if (result.page > totalPages.length || result.page < 1 || /[a-z]/i.test(result.page)) {
-        return res.render("pageError", {
-            error: 'La pagina que está buscando no existe!'
-        })
+
     }
     const user = req.session.user
     const userID = req.user._id.toString()
@@ -157,4 +152,9 @@ const getSessionUser = async (req, res) => {
         premium: user.role === 'premium' || user.role === 'admin' ? true : false
     })
 }
-export default { getProductsViewController, getProductByIdViewController, getProductsFromCartViewController, getSessionUser }
+const getUsers = async (req, res) => {
+    console.log('getting users')
+    const result = await userModel.find().lean()
+    res.status(200).send(result)
+}
+export default { getProductsViewController, getProductByIdViewController, getProductsFromCartViewController, getSessionUser, getUsers }

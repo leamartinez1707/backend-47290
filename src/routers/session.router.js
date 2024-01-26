@@ -8,7 +8,6 @@ import UserPasswordModel from '../dao/models/user_password.model.js'
 import { generateRandomString, createHash } from '../utils/utils.js'
 import config from "../config/config.js";
 
-
 const router = Router()
 
 router.post('/register', passport.authenticate('register', {
@@ -39,6 +38,7 @@ router.post('/login', passport.authenticate('login', { failureRedirect: '/sessio
             cart: req.user.cart
         }
     }
+    await UserModel.findOneAndUpdate({ email: req.session.user.email }, { last_login: Date.now() })
     logger.info(`Usuario ${req.user.email} ha ingresado con éxito en la web`)
 
     res.redirect('/products')
@@ -46,13 +46,22 @@ router.post('/login', passport.authenticate('login', { failureRedirect: '/sessio
 })
 
 
-router.get('/logout', (req, res) => {
+router.get('/logout', async (req, res) => {
+    try {
+        await UserModel.findOneAndUpdate({ email: req.session.user.email }, { last_login: Date.now() })
+
+    } catch (error) {
+        res.status(500).render('pageError', {
+            error: error.message
+        })
+    }
     req.session.destroy(err => {
         if (err) {
             logger.error(err)
             res.status(500).render('pageError')
-        } else res.redirect('/')
-
+        } else {
+            res.redirect('/')
+        }
     })
 })
 

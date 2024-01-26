@@ -138,15 +138,6 @@ const purchaseCartController = async (req, res) => {
         }
         let transporter = nodemailer.createTransport(mailConfig)
 
-        // let tableProducts = ticket.products.forEach(prd => {
-        //     `
-        //         <tr>
-        //         <td>${prd._id}</td>
-        //         <td>${prd.title}</td>
-        //         <td>$ ${prd.price}</td>
-        //         </tr>
-        //         `
-        // })
         let email = req.session.user.email
         let message = {
             from: config.nodemailer_user,

@@ -15,6 +15,8 @@ paths:
                   $ref: "#/components/schemas/Producto"
         "500":
           description: Error interno en el servidor
+        "401":
+          description: El usuario no inició sesión
     post:
       summary: Registra un nuevo producto en la base de datos
       tags:
@@ -34,6 +36,8 @@ paths:
                 $ref: "#/components/schemas/Producto"
         "500":
           description: Error interno en el servidor
+        "401":
+          description: El usuario no inició sesión
   /api/products/{pid}:
     get:
       summary: Obtiene el producto a partir del ID pasado por parámetro.
@@ -57,6 +61,8 @@ paths:
                   $ref: "#/components/schemas/Producto"
         "500":
           description: Error interno en el servidor
+        "401":
+          description: El usuario no inició sesión
     put:
       summary: Modificar un producto a partir del ID pasado por parámetro.
       tags:
@@ -83,6 +89,8 @@ paths:
                 $ref: "#/components/schemas/Producto"
         "500":
           description: Error interno en el servidor
+        "401":
+          description: El usuario no inició sesión
     delete:
       summary: Borrar un producto de la base de datos, a partir del ID pasado por parámetro.
       tags:
@@ -103,6 +111,8 @@ paths:
                 $ref: "#/components/schemas/Producto"
         "500":
           description: Error interno en el servidor
+        "401":
+          description: El usuario no inició sesión
 components:
   schemas:
     Producto:
@@ -145,6 +155,19 @@ components:
         category: pantalones
         thumbnail: https://http2.mlstatic.com/D_NQ_NP_884262-MLU72365605295_102023-O.webp
         owner: leandro@gmail.com
+    Carrito:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Id autogenerada por MongoDB
+        products:
+          type: Array
+          description: Productos agregados al carrito
+          $ref: "#/components/schemas/Producto"
+      example:
+        _id: ObjectId("65824f2444b4ccba0ad1d959")
+        products: [{ "product": "6583c3f9f3a2c28a2e9a036c", "quantity": 2 }]
   requestBodies:
     productData:
       type: object

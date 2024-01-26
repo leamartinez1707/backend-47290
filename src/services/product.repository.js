@@ -1,4 +1,3 @@
-// import productDao from "../dao/productDao.js"
 export default class ProductRepository {
 
     constructor(dao) {

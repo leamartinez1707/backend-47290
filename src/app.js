@@ -39,6 +39,8 @@ app.use(passport.session())
 
 // Para cargar archivos en formato json con POST
 app.use(express.json())
+// Con esta expresion permitimos enviar datos POST desde un formulario HTML
+app.use(express.urlencoded({ extended: true }))
 
 // Setear Handlebars
 app.engine('handlebars', handlebars.engine())
@@ -46,9 +48,6 @@ app.set('views', './src/views')
 app.set('view engine', 'handlebars')
 // Permite leer los archivos de la carpeta public
 app.use(express.static('./public'))
-
-// Con esta expresion permitimos enviar datos POST desde un formulario HTML
-app.use(express.urlencoded({ extended: true }))
 
 try {
 
@@ -69,7 +68,6 @@ try {
         apis: ['./docs/**/*.yaml']
     }
     const specs = swaggerJSDoc(swaggerOptions);
-    app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 
     // App funciona como servidor web, escuchamos las peticiones en el puerto 8080
     const httpsrv = app.listen(config.port, () => logger.info(`Server is up at Port: ${config.port} !!`))
@@ -84,11 +82,13 @@ try {
     app.use('/session', sessionRouter)
     app.use('/api/products', productRouter)
     app.use('/api/carts', cartsRouter)
+    app.use('/api/users', usersRouter)
     app.use('/products', viewsRouter)
     app.use('/carts', viewsRouter)
-    app.use('/api/users', usersRouter)
+    app.use('/users', viewsRouter)
     app.use('/chat', chatRouter)
     app.use('/mockingproducts', mockingRouter)
+    app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
     app.use(errorHandler)
 
 

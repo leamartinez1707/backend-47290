@@ -54,6 +54,7 @@
                             {{userDTO.cart}}
                         </dd>
                     </div>
+
                     {{#if premium}}
                     <div class="py-3 sm:py-5 sm:grid sm:grid-cols-6 sm:gap-2 sm:px-6">
                         <button type="button" class="text-white rounded bg-gray-700 w-24 text-medium">
@@ -65,7 +66,15 @@
                     </div>
                     {{/if}}
                 </dl>
+
             </div>
+        </div>
+        <div>
+            <form class="form" action="/api/users/premium/{{userID}}" method="post" enctype="multipart/form-data">
+                name: <input type="text" name="name"><br>
+                foto: <input type="file" name="archivo">
+                <input type="submit" value="Subir foto">
+            </form>
         </div>
     </div>
 </div>

@@ -197,9 +197,40 @@ components:
         products:
           type: Array
           description: Productos agregados al carrito
+          $ref: "#/components/schemas/Producto"
       example:
         _id: ObjectId("65824f2444b4ccba0ad1d959")
         products: [{ "product": "6583c3f9f3a2c28a2e9a036c", "quantity": 2 }]
+    Producto:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Id autogenerada por MongoDB
+        title:
+          type: String
+          description: Título del producto
+        description:
+          type: String
+          description: Descripción del producto
+        price:
+          type: Number
+          description: Precio del producto
+        code:
+          type: String
+          description: Código del producto
+        stock:
+          type: Number
+          description: Stock del producto
+        category:
+          type: String
+          description: Categoría del producto
+        thumbnail:
+          type: String
+          description: Imágenes del producto
+        owner:
+          type: String
+          description: Creador del producto
   requestBodies:
     cartData:
       type: object
