@@ -65,6 +65,7 @@ router.post('/premium/:uid', uploader.single('archivo'), async (req, res) => {
 
 })
 router.delete('/deleteInactiveUsers', userControl.deleteUsers)
+router.delete('/deleteUser/:email', userControl.deleteOneUser)
 
 
 export default router

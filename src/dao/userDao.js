@@ -43,7 +43,6 @@ export default class UserDao {
             }
         }
     }
-
     delete = async () => {
         try {
             const users = await this.model.find().lean()
@@ -104,6 +103,25 @@ export default class UserDao {
                 statusCode: 500,
                 response: {
                     status: 'error', error: error.message
+                }
+            }
+        }
+    }
+    deleteOne = async (email) => {
+        try {
+            await UserModel.findOneAndDelete({ email: email })
+            logger.info(`User ${email} was successfully deleted`)
+            return {
+                statusCode: 200,
+                response: {
+                    status: 'success', error: `User ${email} was successfully deleted`
+                }
+            }
+        } catch (error) {
+            return {
+                statusCode: 500,
+                response: {
+                    status: 'error', error: `Could not delete user ${email}`
                 }
             }
         }

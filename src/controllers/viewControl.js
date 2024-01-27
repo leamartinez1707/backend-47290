@@ -1,5 +1,4 @@
 import { CartService, ProductService, UserService } from '../services/index.js'
-import userModel from '../dao/models/user.model.js'
 import UserDTO from "../dto/userDTO.js"
 import logger from '../utils/logger.js'
 import dotenv from 'dotenv'
@@ -105,7 +104,6 @@ const getProductByIdViewController = async (req, res) => {
             error: 'No pudimos encontrar el producto con este ID!!'
         })
     }
-
     res.status(200).render("productDetail", {
         product: product.response.payload,
         user,
@@ -153,8 +151,10 @@ const getSessionUser = async (req, res) => {
     })
 }
 const getUsers = async (req, res) => {
-    console.log('getting users')
-    const result = await userModel.find().lean()
-    res.status(200).send(result)
+    const result = await UserService.getAll()
+    res.status(200).render('users', {
+        users: result.response.payload,
+        userLog: req.session.user.email
+    })
 }
 export default { getProductsViewController, getProductByIdViewController, getProductsFromCartViewController, getSessionUser, getUsers }

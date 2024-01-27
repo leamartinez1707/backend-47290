@@ -15,7 +15,7 @@ router.get('/real/realtimeproducts', publicRoutes, verifyRoles(['user', 'admin',
 
 
 // CORREGIR ESTE ROUTER YA QUE NO DEJA INGRESAR, VERIFICAR LA RUTA /USERS
-router.get('/get', publicRoutes, verifyRoles(['admin', 'user']), viewControl.getUsers)
+router.get('/control/data', publicRoutes, verifyRoles(['admin', 'user']), viewControl.getUsers)
 
 
 export default router
