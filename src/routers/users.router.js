@@ -64,6 +64,7 @@ router.post('/premium/:uid', uploader.single('archivo'), async (req, res) => {
     }
 
 })
+router.put('/updateRol/:email/:rol', userControl.updateRol)
 router.delete('/deleteInactiveUsers', userControl.deleteUsers)
 router.delete('/deleteUser/:email', userControl.deleteOneUser)
 

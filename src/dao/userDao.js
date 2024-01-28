@@ -126,4 +126,23 @@ export default class UserDao {
             }
         }
     }
+    updateRol = async (email, rol) => {
+        try {
+            await UserModel.findOneAndUpdate({ email: email }, { role: rol })
+            logger.info(`User ${email} was successfully update with rol: ${rol}`)
+            return {
+                statusCode: 200,
+                response: {
+                    status: 'success', error: `User ${email} was with rol: ${rol}`
+                }
+            }
+        } catch (error) {
+            return {
+                statusCode: 500,
+                response: {
+                    status: 'error', error: `Could not update user ${email}`
+                }
+            }
+        }
+    }
 }
