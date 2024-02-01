@@ -11,8 +11,6 @@ export default class UserDao {
     }
 
     getAll = async () => {
-
-
         try {
             let users = await this.model.find().lean()
             let newUsers = []
@@ -20,7 +18,7 @@ export default class UserDao {
             if (!users) {
                 return {
                     statusCode: 404, response: {
-                        status: 'error', error: 'Users were not found'
+                        status: 'error', error: 'No se encontraron los usuarios'
                     }
                 }
 
@@ -38,7 +36,7 @@ export default class UserDao {
             return {
                 statusCode: 500,
                 response: {
-                    status: 'error', error: 'Could not get users'
+                    status: 'error', error: 'No se pudieron obtener los usuarios'
                 }
             }
         }
@@ -56,7 +54,7 @@ export default class UserDao {
             if (!users) {
                 return {
                     statusCode: 404, response: {
-                        status: 'error', error: 'Users were not found'
+                        status: 'error', error: 'No se encontraron los usuarios'
                     }
                 }
             }
@@ -70,6 +68,7 @@ export default class UserDao {
                 // Convierte la diferencia a minutos
                 const minutosTranscurridos = tiempoTranscurrido / (1000 * 60);
                 // Verifica si la diferencia es mayor a 2 dias (2.880 minutos)
+                console.log(minutosTranscurridos)
                 if (minutosTranscurridos >= 2.880) {
 
                     await this.model.deleteOne(element._id)
@@ -110,18 +109,18 @@ export default class UserDao {
     deleteOne = async (email) => {
         try {
             await UserModel.findOneAndDelete({ email: email })
-            logger.info(`User ${email} was successfully deleted`)
+            logger.info(`El usuario ${email} fue borrado correctamente`)
             return {
                 statusCode: 200,
                 response: {
-                    status: 'success', error: `User ${email} was successfully deleted`
+                    status: 'success', error: `El usuario ${email} fue borrado correctamente`
                 }
             }
         } catch (error) {
             return {
                 statusCode: 500,
                 response: {
-                    status: 'error', error: `Could not delete user ${email}`
+                    status: 'error', error: `No se pudo borrar el usuario ${email}`
                 }
             }
         }
@@ -129,18 +128,45 @@ export default class UserDao {
     updateRol = async (email, rol) => {
         try {
             await UserModel.findOneAndUpdate({ email: email }, { role: rol })
-            logger.info(`User ${email} was successfully update with rol: ${rol}`)
+            console.log(rol)
+            logger.info(`El usuario ${email} fue actualizado correctamente, nuevo rol: ${rol}`)
             return {
                 statusCode: 200,
                 response: {
-                    status: 'success', error: `User ${email} was with rol: ${rol}`
+                    status: 'success', error: `El usuario ${email} fue actualizado correctamente, nuevo rol: ${rol}`
                 }
             }
         } catch (error) {
             return {
                 statusCode: 500,
                 response: {
-                    status: 'error', error: `Could not update user ${email}`
+                    status: 'error', error: `No se pudo actualizar el usuario: ${email}`
+                }
+            }
+        }
+    }
+    getOne = async (email) => {
+        try {
+            let user = await this.model.findOne({ email: email })
+            user = new UserInfoDto(user)
+            if (!user) {
+                return {
+                    statusCode: 404, response: {
+                        status: 'error', error: 'No se encontró el usuario'
+                    }
+                }
+
+            } else {
+                return {
+                    statusCode: 200,
+                    response: { status: 'success', payload: user }
+                }
+            }
+        } catch (error) {
+            return {
+                statusCode: 500,
+                response: {
+                    status: 'error', error: 'No se pudo encontrar al usuario deseado!'
                 }
             }
         }

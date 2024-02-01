@@ -1,7 +1,9 @@
-import { ProductService } from '../services/index.js'
+import { ProductService, UserService } from '../services/index.js'
 import CustomError from '../services/errors/custom_error.js'
 import EErros from '../services/errors/enums.js'
 import { generateErrorInfo, generateErrorInfoTwo } from '../services/errors/description.js'
+import nodemailer from 'nodemailer'
+import config from '../config/config.js';
 import logger from '../utils/logger.js'
 
 const getProducts = async (req, res) => {
@@ -138,15 +140,43 @@ const updateProductController = async (req, res) => {
     res.status(result.statusCode).send(result)
 }
 const deleteProductController = async (req, res) => {
+    const mailConfig = {
+        service: 'gmail',
+        auth: { user: config.nodemailer_user, pass: config.nodemailer_pass }
+    }
+    const transporter = nodemailer.createTransport(mailConfig)
+
     const pid = req.params.pid
     const product = await ProductService.getById(pid)
     if (product.statusCode === 404 || product.statusCode === 500) return res.json({ status: 'error', error: product.response.error })
     if (req.session.user.role === 'premium') {
         if (product.response.payload.owner !== req.session.user.email) return res.status(403).json({ status: 'error', error: 'No autorizado, solo el dueño del producto puede borrarlo!' })
     }
+    const user = await UserService.getOne(product.response.payload.owner)
+    if (user.response.payload.role === 'premium') {
+
+        logger.warning('Aca le mandaria un mensaje al dueño del producto, que fue borrado')
+        let message = {
+            from: config.nodemailer_user,
+            to: product.response.payload.owner,
+            subject: '[ elem Shop ] Mensje de aviso!!',
+            html: `<h1>[ IMPORTANTE! ] eleM | Tienda de ropa online</h1>
+            <hr />
+            <p> Nos contactamos con usted para informarle que el siguiente producto fue eliminado del sistema.: <br>
+             <h3>${product.response.payload._id}</h3>
+             <h4>${product.response.payload.title}</h4></p>
+            <p> En caso de cualquier duda, contactese con un administrador! </p>
+            <br>
+            <hr />
+            <br>
+            <br>
+            Saludos,<br><strong>Equipo de eleM Uruguay.</strong>`
+        }
+        await transporter.sendMail(message)
+    }
     if (req.session.user.role === 'user') return res.status(403).json({ status: 'error', error: 'No autorizado, solo admin o premium puede utilizar esta funcion' })
     const result = await ProductService.delete(pid)
-    if (result.statusCode === 500 || result.statusCode === 400 ) {
+    if (result.statusCode === 500 || result.statusCode === 400) {
         return res.status(result.statusCode).send(result.response.error)
     }
     res.status(result.statusCode).send(result.response.payload)

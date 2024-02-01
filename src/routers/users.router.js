@@ -33,7 +33,7 @@ router.get('/premium/:uid', verifyRoles(['premium', 'user']), async (req, res) =
     }
 })
 router.get('/', userControl.getUsers)
-
+router.get('/:email', userControl.getOneUser)
 router.get('/addProduct', verifyRoles(['premium', 'admin']), async (req, res) => {
 
     res.render('actions/addProduct', {
@@ -65,7 +65,7 @@ router.post('/premium/:uid', uploader.single('archivo'), async (req, res) => {
 
 })
 router.put('/updateRol/:email/:rol', userControl.updateRol)
-router.delete('/deleteInactiveUsers', userControl.deleteUsers)
+router.delete('/', userControl.deleteUsers)
 router.delete('/deleteUser/:email', userControl.deleteOneUser)
 
 

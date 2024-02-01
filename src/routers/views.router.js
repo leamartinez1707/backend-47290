@@ -12,10 +12,7 @@ router.get('/product/:pid', publicRoutes, verifyRoles(['user', 'admin', 'premium
 router.get('/real/realtimeproducts', publicRoutes, verifyRoles(['user', 'admin', 'premium']), (req, res) => {
     res.render("realTimeProducts")
 })
-
-
-// CORREGIR ESTE ROUTER YA QUE NO DEJA INGRESAR, VERIFICAR LA RUTA /USERS
-router.get('/control/data', publicRoutes, verifyRoles(['admin', 'user']), viewControl.getUsers)
+router.get('/control/data', publicRoutes, verifyRoles(['admin']), viewControl.getUsers)
 
 
 export default router

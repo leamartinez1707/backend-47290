@@ -7,6 +7,9 @@ dotenv.config()
 
 const getProductsViewController = async (req, res) => {
 
+    if (!req.user) return res.status(401).render('sessions/welcome')
+    if (!req.session.user) return res.status(401).render('sessions/welcome')
+
     const { limit = 8, page = 1 } = req.query
     const pageFilters = {}
 
@@ -72,7 +75,13 @@ const getProductsViewController = async (req, res) => {
 
     }
     const user = req.session.user
-    const userID = req.user._id.toString()
+    let userID
+    if (req.user.email === 'adminCoder@coder.com') {
+        userID = 'AdminCoder'
+    } else {
+
+        userID = req.user._id.toString()
+    }
 
     return res.render("home",
         {
@@ -96,7 +105,13 @@ const getProductByIdViewController = async (req, res) => {
 
     const pid = req.params.pid
     const user = req.session.user
-    const userID = req.user._id.toString()
+    let userID
+    if (req.user.email === 'adminCoder@coder.com') {
+        userID = 'AdminCoder'
+    } else {
+
+        userID = req.user._id.toString()
+    }
     const product = await ProductService.getById(pid)
     if (product.statusCode === 500) {
         logger.error(`El usuario ${req.user.email} quiso ver el detalle del producto ${pid} y este no existe`)
@@ -116,7 +131,13 @@ const getProductsFromCartViewController = async (req, res) => {
     const cid = req.params.cid
     const cartProducts = await CartService.getAll(cid)
     const user = req.session.user
-    const userID = req.user._id.toString()
+    let userID
+    if (req.user.email === 'adminCoder@coder.com') {
+        userID = 'AdminCoder'
+    } else {
+
+        userID = req.user._id.toString()
+    }
     if (cartProducts.statusCode === 500) {
 
         logger.error(`El usuario ${req.user.email} quiso acceder al carrito ${cid} y obtuvo un error`)
@@ -141,7 +162,13 @@ const getProductsFromCartViewController = async (req, res) => {
 const getSessionUser = async (req, res) => {
 
     const user = req.session.user
-    const userID = req.user._id.toString()
+    let userID
+    if (req.user.email === 'adminCoder@coder.com') {
+        userID = 'AdminCoder'
+    } else {
+
+        userID = req.user._id.toString()
+    }
     const userDTO = new UserDTO(user)
     res.render('sessions/profile', {
         user,
@@ -152,9 +179,15 @@ const getSessionUser = async (req, res) => {
 }
 const getUsers = async (req, res) => {
     const result = await UserService.getAll()
+    let sessionRole = result.response.payload.find(prd => prd.email === req.session.user.email)
+    if (!sessionRole) {
+        sessionRole = 'admin'
+    }
+    req.session.user.role = sessionRole.role
     res.status(200).render('users', {
         users: result.response.payload,
-        userLog: req.session.user.email
+        userLog: req.session.user.email,
+        user: req.session.user
     })
 }
 export default { getProductsViewController, getProductByIdViewController, getProductsFromCartViewController, getSessionUser, getUsers }
