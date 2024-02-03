@@ -18,7 +18,7 @@ export default {
     clientSecretGit: process.env.CLIENT_SECRET_GITHUB,
     callbackUrlGit: process.env.CLIENT_URL_GITHUB,
     persistence: process.env.PERSISTENCE,
-    environment: opts.mode || process.env.ENVIRONMENT,
+    environment: process.env.ENVIRONMENT,
     port: opts.p || process.env.PORT || 8080,
     nodemailer_user: process.env.MAILER_USER,
     nodemailer_pass: process.env.MAILER_PASS
