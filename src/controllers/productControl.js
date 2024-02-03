@@ -154,8 +154,6 @@ const deleteProductController = async (req, res) => {
     }
     const user = await UserService.getOne(product.response.payload.owner)
     if (user.response.payload.role === 'premium') {
-
-        logger.warning('Aca le mandaria un mensaje al dueño del producto, que fue borrado')
         let message = {
             from: config.nodemailer_user,
             to: product.response.payload.owner,

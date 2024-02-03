@@ -13,12 +13,7 @@ const userSchema = new mongoose.Schema({
         ref: "carts"
     },
     role: { type: String, enum: ['user', 'admin', 'premium'], default: 'user' },
-    documents: {
-        type: [{
-            name: { type: String },
-            reference: { type: String },
-        }],
-    },
+    documents: [],
     last_login: { type: Date, default: Date.now }
 })
 

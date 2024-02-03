@@ -34,13 +34,13 @@ router.get('/premium/:uid', verifyRoles(['premium', 'user']), async (req, res) =
 })
 router.get('/', userControl.getUsers)
 router.get('/:email', userControl.getOneUser)
-router.get('/addProduct', verifyRoles(['premium', 'admin']), async (req, res) => {
+router.get('/control/addProduct', verifyRoles(['premium', 'admin']), async (req, res) => {
 
     res.render('actions/addProduct', {
         user: req.session.user
     })
 })
-router.get('/updateProduct', verifyRoles(['premium', 'admin']), async (req, res) => {
+router.get('/control/updateProduct', verifyRoles(['premium', 'admin']), async (req, res) => {
 
     res.render('actions/updateProduct', {
         user: req.session.user
@@ -52,13 +52,21 @@ router.post('/premium/:uid', uploader.single('archivo'), async (req, res) => {
         const uid = req.params.uid
         if (!req.file) return res.status(400).json({ status: 'error', error: 'No hay archivo adjunto' })
         const user = await UserModel.findById(uid).lean()
-        user.documents.name = req.file.filename
-        user.documents.reference = `http://localhost:8080/${req.file.filename}`
-        let archivo = req.file
+        if (!user) {
+            return res.status(404).json({ status: 'error', error: 'Usuario no encontrado' });
+        }
+        if (!user) {
+            return res.status(404).json({ status: 'error', error: 'Usuario no encontrado' });
+        }
+        user.documents.push({
+            name: req.file.filename
+        },
+            {
+                reference: `http://localhost:8080/${req.file.filename}`
+            });
+
         await UserModel.findByIdAndUpdate(uid, user)
-        const userF = await UserModel.findById(uid).lean()
-        console.log(userF)
-        res.status(200).json({ status: 'success', payload: archivo })
+        res.status(200).json({ status: 'success', payload: user })
     } catch (error) {
         res.status(500).json({ status: 'error', error: error })
     }
