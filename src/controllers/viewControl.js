@@ -24,8 +24,6 @@ const getProductsViewController = async (req, res) => {
     const result = await ProductService.dao.model.paginate(pageFilters, paginateOpt)
 
     if (!result) {
-        logger.error(`El usuario ${req.user.email} quiso acceder al carrito ${cid} y obtuvo un error`)
-
         return res.render("pageError", {
             error: 'La pagina que está buscando no existe!'
         })
@@ -35,20 +33,35 @@ const getProductsViewController = async (req, res) => {
     if (req.query.page) {
 
         const modifiedUrl = req.originalUrl.replace(`page=${req.query.page}`, `page=${result.prevPage}`)
-        previousLink = `http://${req.hostname}:8080${modifiedUrl}`
-    } else {
-        previousLink = `http://${req.hostname}:8080${req.originalUrl}?page=${result.prevPage}`
 
+        if (req.hostname == 'localhost') {
+            previousLink = `http://${req.hostname}:8080${modifiedUrl}`
+        } else {
+            previousLink = `http://${req.hostname}${modifiedUrl}`
+        }
+    } else {
+        if (req.hostname == 'localhost') {
+            previousLink = `http://${req.hostname}:8080${req.originalUrl}?page=${result.prevPage}`
+        } else {
+            previousLink = `http://${req.hostname}${req.originalUrl}?page=${result.prevPage}`
+        }
     }
     let nextLink
 
     if (req.query.page) {
 
         const modifiedUrl = req.originalUrl.replace(`page=${req.query.page}`, `page=${result.nextPage}`)
-        nextLink = `http://${req.hostname}:8080${modifiedUrl}`
+        if (req.hostname == 'localhost') {
+            nextLink = `http://${req.hostname}:8080${modifiedUrl}`
+        } else {
+            nextLink = `http://${req.hostname}${modifiedUrl}`
+        }
     } else {
-        nextLink = `http://${req.hostname}:8080${req.originalUrl}?page=${result.nextPage}`
-
+        if (req.hostname == 'localhost') {
+            nextLink = `http://${req.hostname}:8080${req.originalUrl}?page=${result.nextPage}`
+        } else {
+            nextLink = `http://${req.hostname}${req.originalUrl}?page=${result.nextPage}`
+        }
     }
 
     const totalPages = []
@@ -56,24 +69,35 @@ const getProductsViewController = async (req, res) => {
 
     for (let index = 1; index <= result.totalPages; index++) {
         if (!req.query.page) {
+            if (req.hostname == 'localhost') {
+                link = `http://${req.hostname}:8080${req.originalUrl}?page=${index}`
+            } else {
+                link = `http://${req.hostname}${req.originalUrl}?page=${index}`
 
-            link = `http://${req.hostname}:8080${req.originalUrl}?page=${index}`
+            }
 
         } else if (req.query.page > result.totalPages) {
+            if (req.hostname == 'localhost') {
+                link = `http://${req.hostname}:8080${req.originalUrl}&page=${index}`
+            } else {
+                link = `http://${req.hostname}${req.originalUrl}&page=${index}`
 
-            link = `http://${req.hostname}:8080${req.originalUrl}&page=${index}`
+            }
         }
         else {
+
             const modifiedUrl = req.originalUrl.replace(`page=${req.query.page}`, `page=${index}`)
-            link = `http://${req.hostname}:8080${modifiedUrl}`
+            if (req.hostname == 'localhost') {
+                link = `http://${req.hostname}:8080${modifiedUrl}`
+            } else {
+                link = `http://${req.hostname}${modifiedUrl}`
+
+            }
 
         }
         totalPages.push({ page: index, link })
     }
 
-    if (result.page > totalPages.length || result.page < 1 || /[a-z]/i.test(result.page)) {
-
-    }
     const user = req.session.user
     let userID
     if (req.user.email === 'adminCoder@coder.com') {
