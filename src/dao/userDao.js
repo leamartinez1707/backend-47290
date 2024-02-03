@@ -68,8 +68,7 @@ export default class UserDao {
                 // Convierte la diferencia a minutos
                 const minutosTranscurridos = tiempoTranscurrido / (1000 * 60);
                 // Verifica si la diferencia es mayor a 2 dias (2.880 minutos)
-                console.log(minutosTranscurridos)
-                if (minutosTranscurridos >= 2.880) {
+                if (minutosTranscurridos >= 2880) {
 
                     await this.model.deleteOne(element._id)
                     deleteUsers.push(element.email)

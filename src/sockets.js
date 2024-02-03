@@ -1,22 +1,26 @@
 import messageModel from './dao/models/message.model.js'
-import { productModel } from './dao/models/product.model.js'
+import logger from './utils/logger.js'
+import { ProductService } from './services/index.js'
 
 
 export default (io) => {
     io.on('connection', async socket => {
-        console.log(`Nuevo cliente conectado: ${socket.id}`)
-        const productsList = await productModel.find().lean()
-        socket.emit('products', productsList)
+        logger.info(`Nuevo cliente conectado: ${socket.id}`)
+        const productsList = await ProductService.getAll()
+        const result = productsList.response.payload
+        socket.emit('products', result)
 
         socket.on('add', async product => {
-            await productModel.create(product)
-            const productsList = await productModel.find().lean()
-            io.emit('products', productsList)
+            await ProductService.create(product)
+            const productsList = await ProductService.getAll()
+            const result = productsList.response.payload
+            io.emit('products', result)
         })
         socket.on('delete', async id => {
-            await productModel.deleteOne({ _id: id })
-            let productsList = await productModel.find().lean()
-            io.emit('products', productsList)
+            await ProductService.delete(id)
+            const productsList = await ProductService.getAll()
+            const result = productsList.response.payload
+            io.emit('products', result)
 
         })
         socket.broadcast.emit('alert')

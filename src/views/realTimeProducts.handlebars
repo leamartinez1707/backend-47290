@@ -1,63 +1,50 @@
-<div class="header mb-4 text-center bg-secondary text-white">
-    <h1 class="p-3">Real time products</h1>
+<div class="header mb-4 text-center text-black">
+    <h1 class="mb-8 text-6xl text-center">Real time products</h1>
 </div>
 
 <div class="bg-white">
     <div class="mx-auto max-w-2xl px-4 pb-8 sm:px-6 sm:py-8 lg:max-w-7xl lg:px-8">
-        <div class="card-header text-center">
-            <h2>Crea tu producto</h2>
-        </div>
-        <div class="card-body">
+        <div class="bg-white px-6 py-8 rounded shadow-lg text-black w-full">
             <form class="form" id="formulario">
-                <div class="m-3">
-                    <input type="text" class="form-control" name="title" id="title" placeholder="Titulo" required />
-                </div>
-                <div class="m-3">
-                    <input type="text" class="form-control" name="description" id="description"
-                        placeholder="Descripcion" required />
-                </div>
-                <div class="m-3">
-                    <input type="number" class="form-control" name="price" id="price" placeholder="Precio $" required />
-                </div>
-                <div class="m-3">
-                    <input type="text" class="form-control" name="code" id="code" placeholder="Codigo" required />
-                </div>
-                <div class="m-3">
-                    <input type="text" class="form-control" name="category" id="category" placeholder="Categoria"
-                        required />
-                </div>
-                <div class="m-3">
-                    <input type="number" class="form-control" name="stock" id="stock" placeholder="Stock" required />
-                </div>
-                <div class="m-3">
-                    <input type="text" class="form-control" name="thumbnail" id="thumbnail" placeholder="Imagenes"
-                        required />
-                </div>
-                <button type="submit" class="btn btn-danger form-control justify-content-center mb-2"
-                    id="addProduct">Agregar producto</button>
+                <h1 class="mb-8 text-3xl text-center">Agregar un producto</h1>
+                Titulo<input type="text" class="block border border-grey-light w-full p-3 rounded mb-4" name="title"
+                    id="title" required placeholder="Título" />
+                Descripcion<input type="text" class="block border border-grey-light w-full p-3 rounded mb-4"
+                    name="description" id="description" required placeholder="Descripción" />
+                Precio<input type="text" class="block border border-grey-light w-full p-3 rounded mb-4" name="price"
+                    id="price" required placeholder="Precio" />
+                Codigo<input type="text" class="block border border-grey-light w-full p-3 rounded mb-4" name="code"
+                    id="code" required placeholder="Codigo" />
+                Stock<input type="text" class="block border border-grey-light w-full p-3 rounded mb-4" name="stock"
+                    required placeholder="Stock" id="stock" />
+                Categoria<input type="text" class="block border border-grey-light w-full p-3 rounded mb-4"
+                    name="category" id="category" required placeholder="Categoría" />
+                Thumbnail<input type="text" class="block border border-grey-light w-full p-3 rounded mb-4"
+                    name="thumbnail" id="thumbnail" required placeholder="Imagen" />
+                <button type="submit"
+                    class="w-full text-center py-3 rounded bg-green text-white bg-green-400 hover:bg-green-600 focus:outline-none my-1"
+                    id="addProduct">Crear
+                    producto</button>
             </form>
         </div>
-
-        <table class="table-auto">
-            <thead class="fw-bold">
-                <tr>
-                    <td>ID</td>
-                    <td>Título</td>
-                    <td>Descripción</td>
-                    <td>Precio</td>
-                    <td>Categoria</td>
-                    <td>Stock</td>
-                    <td>Code</td>
+    </div>
+    <div class="mx-auto flex justify-center">
+        <table class="max-w-lg text-sm text-left rtl:text-right text-gray-900">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                <tr class="border">
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Descripción</th>
+                    <th>Precio</th>
+                    <th>Categoria</th>
+                    <th>Stock</th>
+                    <th>Code</th>
                 </tr>
             </thead>
-            <tbody id="table-body">
+            <tbody id="table-body" class="truncate">
 
             </tbody>
-
-
         </table>
-
-
     </div>
 </div>
 

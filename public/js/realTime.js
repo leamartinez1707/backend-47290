@@ -37,14 +37,14 @@ function showProducts(list) {
         let fila = document.createElement("tr")
         fila.innerHTML = `
             
-            <td>${prd._id}</td>
-            <td>${prd.title}</td>
-            <td>${prd.description}</td>
-            <td>$ ${prd.price}</td>
-            <td>${prd.category}</td>
-            <td>${prd.stock}</td>
-            <td>${prd.code}</td>
-            <td><btn class="btn btn-danger btn_delete" onClick="deleteProduct('${prd._id}')">Eliminar</btn>
+            <td class="">${prd._id}</td>
+            <td class="">${prd.title}</td>
+            <td class="truncate">${prd.description}</td>
+            <td class="">$ ${prd.price}</td>
+            <td class="">${prd.category}</td>
+            <td class="">${prd.stock}</td>
+            <td class="">${prd.code}</td>
+            <td class=""><button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded btn_delete" onClick="deleteProduct('${prd._id}')">Eliminar</button>
             </td>
             `
 

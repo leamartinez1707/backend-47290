@@ -2,7 +2,7 @@ import dotenv from 'dotenv'
 import program from '../utils/commands.js'
 
 const opts = program.opts()
-console.log(`Envi = ${opts.mode}`)
+console.log(`Env = ${opts.mode}`)
 
 dotenv.config({
     path: opts.mode === 'production' ? './.env.production' : './.env.development'
@@ -19,7 +19,7 @@ export default {
     callbackUrlGit: process.env.CLIENT_URL_GITHUB,
     persistence: process.env.PERSISTENCE,
     environment: opts.mode || process.env.ENVIRONMENT,
-    port: opts.p || process.env.PORT,
+    port: opts.p || process.env.PORT || 8080,
     nodemailer_user: process.env.MAILER_USER,
     nodemailer_pass: process.env.MAILER_PASS
 }

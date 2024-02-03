@@ -91,7 +91,6 @@ try {
     app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
     app.use(errorHandler)
 
-
     Sockets(io)
 
 } catch (error) {

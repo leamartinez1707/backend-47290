@@ -1,6 +1,6 @@
 import { Router } from "express";
 import viewControl from "../controllers/viewControl.js";
-import { publicRoutes, privateRoutes } from "../middlewares/auth.middlewares.js"
+import { publicRoutes } from "../middlewares/auth.middlewares.js"
 import { verifyRoles } from "../middlewares/auth.middlewares.js";
 
 

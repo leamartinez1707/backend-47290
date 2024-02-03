@@ -110,7 +110,6 @@ const purchaseCartController = async (req, res) => {
                 // Se actualiza el stock del producto a comprar
                 productToBuy.stock -= purchaseCart.products[index].quantity
 
-
                 await ProductService.update(productToBuy._id, productToBuy)
                 // Eliminamos del carrito todos los productos que se compraron y dejamos los que no tenian stock
                 productsAfterPurchase = productsAfterPurchase.filter((prds) => prds.product._id.toString() !== purchaseCart.products[index].product._id.toString())
@@ -118,7 +117,6 @@ const purchaseCartController = async (req, res) => {
                 amount += (purchaseCart.products[index].quantity * productToBuy.price)
                 // Agregamos el producto all Array del ticket
                 productsToTicket.push({ product: productToBuy._id, price: productToBuy.price, quantity: purchaseCart.products[index].quantity })
-
             }
         }
         // Eliminamos los productos comprados, en MongoDB
@@ -157,10 +155,9 @@ const purchaseCartController = async (req, res) => {
             user: req.session.user,
             purchaseCode: ticket.code,
             noStockProducts: productsAfterPurchase,
-            purchaseAmount: ticket.amount,
             purchaseBuyer: ticket.purchaser,
-            purchaseSubTotal: ticket.amount * 0.8,
-            message: `Mensaje enviado a ${email}.`
+            purchaseAmount: Math.round(ticket.amount * 1.2),
+            message: `Mensaje enviado a ${email}.`  
         })
     } catch (error) {
         return res.status(500).send(error.message)
