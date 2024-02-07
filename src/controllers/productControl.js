@@ -119,9 +119,6 @@ const addProductController = async (req, res) => {
         }
         logger.info(`El producto ${product.code} fue creado con éxito por el usuario ${req.session.user.email}`)
         res.status(result.statusCode).json({ status: 'success', payload: result })
-        // .render('pageAuth', {
-        //     message: 'Producto agregado con éxito'
-        // })
     }
 }
 const updateProductController = async (req, res) => {
@@ -129,8 +126,7 @@ const updateProductController = async (req, res) => {
     if (!pid) return res.status(400).json({ status: 'error', error: 'ID solicitado no disponible' })
     if (req.session.user === 'premium') {
         const product = await ProductService.getById(pid)
-
-        if (product.response.payload.owner !== req.session.user.email) return res.status(403).send('No autorizado para editar producto')
+        if (product.response.payload.owner !== req.session.user.email) return res.status(403).json({ status: 'error', payload: 'No autorizado para editar producto' })
     }
     const productToUpdate = req.body
     const result = await ProductService.update(pid, productToUpdate)

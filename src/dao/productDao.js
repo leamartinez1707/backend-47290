@@ -90,7 +90,7 @@ export default class ProductDao {
         } catch (err) {
             return {
                 statusCode: 500,
-                response: { status: 'success', error: err.message }
+                response: { status: 'error', error: err.message }
             }
         }
 

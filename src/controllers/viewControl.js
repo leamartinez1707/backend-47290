@@ -133,11 +133,10 @@ const getProductByIdViewController = async (req, res) => {
     if (req.user.email === 'adminCoder@coder.com') {
         userID = 'AdminCoder'
     } else {
-
         userID = req.user._id.toString()
     }
     const product = await ProductService.getById(pid)
-    if (product.statusCode === 500) {
+    if (product.statusCode === 500 || product.statusCode === 404) {
         logger.error(`El usuario ${req.user.email} quiso ver el detalle del producto ${pid} y este no existe`)
         return res.status(404).render("pageError", {
             error: 'No pudimos encontrar el producto con este ID!!'

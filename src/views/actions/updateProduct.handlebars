@@ -1,7 +1,7 @@
 <div class="bg-grey-lighter min-h-screen flex flex-col">
     <div class="container md:max-w-lg md:mt-4 mx-auto flex-1 flex flex-col items-center justify-center px-2">
         <div class="bg-white px-6 py-8 rounded shadow-md text-black w-full">
-            <form id="form-data">
+            <form class="form" method="post" id="form-data">
                 <h1 class="mb-8 text-3xl text-center">Actualizar producto</h1>
                 ID<input type="text" class="block border border-grey-light w-full p-3 rounded mb-4" id="pid" required
                     placeholder="Título" />
@@ -66,6 +66,9 @@
         let thumbnail = document.getElementById('thumbnail').value
         let product = { title, description, price, code, stock, category, thumbnail }
 
+        if (!title || !description || !price || !code || !stock || !category || !thumbnail) {
+            return swalError('Llene todos los campos del producto para actualizarlo')
+        }
         const requestOptions = {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -75,12 +78,11 @@
         fetch(`/api/products/${pid}`, requestOptions)
             .then(result => result.json())
             .then(result => {
-
                 if (result.response.status === 'error') return swalError(result.response.error)
                 swalUpdate()
                 clearForm()
             })
-            .catch(error => alert(error))
+            .catch(error => swalError('Error inesperado, verifique que los datos sean correctos o intente más tarde!'))
     }
 
 </script>

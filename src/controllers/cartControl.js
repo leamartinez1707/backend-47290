@@ -56,7 +56,7 @@ const addProductToCartController = async (req, res) => {
 
     // SI EL USUARIO TIENE UN ROL PREMIUM, VERIFICA QUE NO ESTÉ COMPRANDO UN PRODUCTO CREADO POR ÉL.
     if (req.session.user.role === 'premium') {
-        if (product.response.payload.owner === req.session.user.email) return res.status(403).json({ status: 'error', error: 'You cannot buy your own products' })
+        if (product.response.payload.owner === req.session.user.email) return res.status(403).json({ status: 'error', error: 'No puedes comprar tus propios productos!' })
     }
     const result = await CartService.addToCart(cid, pid)
     if (result.statusCode === 500 || result.statusCode === 400) {
