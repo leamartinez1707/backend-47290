@@ -12,7 +12,7 @@
 <div class="h-lvh mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8 bg-gray-100">
     <div class="p-6 text-center">
         <h1 class=" text-2xl font-bold">Cart items.</h1>
-        <h3>ID: {{cartId}}</h3>
+        <h3 id="id_carrito">{{cartId}}</h3>
     </div>
     <div class="mx-auto max-w-5xl justify-center px-6 md:flex md:space-x-6 xl:px-0">
         <div class="rounded-lg md:w-2/3">
@@ -41,10 +41,13 @@
                         </div>
                         <div class="flex items-center space-x-4">
                             <p class="text-sm">{{this.product.price}} $</p>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="h-5 w-5 cursor-pointer duration-150 hover:text-red-500">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
+                            <button onclick="deleteFromCart('{{this.product._id}}')"><svg
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor"
+                                    class="h-5 w-5 cursor-pointer duration-150 hover:text-red-500">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -74,4 +77,41 @@
             </button>
         </div>
     </div>
-</div>
+</div>´
+
+<script>
+    function swalError(error) {
+        Swal.fire({
+            title: `Error de permisos`,
+            text: error,
+            icon: "warning"
+        })
+    }
+    function swalDelete() {
+        Swal.fire({
+            title: `Producto borrado !`,
+            text: 'Se borró el producto del carrito con éxito.',
+            icon: "success"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si se hace clic en "Aceptar", actualiza la página
+                location.reload();
+            }
+        });
+    }
+    const requestOptions = {
+        method: 'delete',
+        headers: { 'Content-Type': 'application/json' }
+    }
+    function deleteFromCart(pid) {
+
+        const cartID = document.getElementById('id_carrito').innerText
+        fetch(`/api/carts/${cartID}/product/${pid}`, requestOptions)
+            .then(result => result.json())
+            .then(result => {
+                if (result.response.status === 'error') return swalError(result.response.error)
+                swalDelete()
+            })
+            .catch(error => swalError(error))
+    }
+</script>

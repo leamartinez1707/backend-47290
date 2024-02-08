@@ -31,6 +31,7 @@ export const verifyRoles = (acceptedRoles) => {
         let userRole
         if (req.session.user.email === 'adminCoder@coder.com') {
             userRole = 'admin'
+            req.session.user.cart = ''
         } else {
             userRole = req.session.user.role
         }
@@ -41,6 +42,8 @@ export const verifyRoles = (acceptedRoles) => {
             return res.status(403).render('pageError', {
                 error: `El usuario ${req.user.email} no tiene permisos para ingresar a la página.`
             }); // 403 Forbidden si no tiene el rol necesario
+            // .json({ status: 'error', error: 'No tiene privilegios suficientes para realizar esta acción' })
+
         }
     }
 }

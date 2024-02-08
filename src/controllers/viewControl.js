@@ -106,11 +106,12 @@ const getProductsViewController = async (req, res) => {
 
         userID = req.user._id.toString()
     }
-
+    const cartTotal = await CartService.getAll(user.cart)
     return res.render("home",
         {
             user,
             userID,
+            cartTotal: cartTotal.response.payload.products.length,
             products: result.docs,
             paginateInfo: {
                 totalPages,

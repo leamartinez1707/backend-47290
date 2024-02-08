@@ -109,7 +109,7 @@
                 if (result.status === 'error') return swalError(result.error)
                 swalAdded()
             })
-            .catch(error => alert(error))
+            .catch(error => swalError(error))
     }
 </script>
 

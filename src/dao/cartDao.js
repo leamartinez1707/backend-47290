@@ -95,7 +95,6 @@ export default class CartDao {
             // } else {
             //     newCart.push(products)
             // }
-            console.log(newCart)
             // res.status(400).json({ status: 'error', error: 'Field products is required' })
 
             // VALIDACIONES PARA VERIFICAR SI LOS DATOS DEL BODY SON CORRECTOS
@@ -324,7 +323,7 @@ export default class CartDao {
 
             // ACTUALIZAR EL CARRITO EN LA BASE DE DATOS, SIN EL PRODUCTO ANTERIORMENTE BORRADO
             let result = await this.model.findByIdAndUpdate(cid, cart, { Document: 'after' }).lean()
-            console.log(result)
+
             cart = await this.model.findById(cid).lean()
             if (!result) return {
                 statusCode: 400,

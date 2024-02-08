@@ -49,19 +49,19 @@ const addProductToCartController = async (req, res) => {
     const pid = req.params.pid
     const cart = await CartService.getAll(cid)
     const product = await ProductService.getById(pid)
-
     if (cart.statusCode === 500 || cart.statusCode === 400 || cart.statusCode === 404) return res.status(400).json({ status: 'error', error: cart.response.error })
     // VALIDA QUE EL CARRITO Y EL PRODUCTO EXISTAN SEGUN LOS PARAMETROS OBTENIDOS
     if (product.statusCode === 500 || product.statusCode === 400 || product.statusCode === 404) return res.status(400).json({ status: 'error', error: product.response.error })
 
     // SI EL USUARIO TIENE UN ROL PREMIUM, VERIFICA QUE NO ESTÉ COMPRANDO UN PRODUCTO CREADO POR ÉL.
     if (req.session.user.role === 'premium') {
-        if (product.response.payload.owner === req.session.user.email) return res.status(403).json({ status: 'error', error: 'No puedes comprar tus propios productos!' })
+        if (product.response.payload.owner === req.session.user.email) {
+            return res.status(403).json({ status: 'error', error: 'No puedes comprar tus propios productos!' })
+        }
     }
     const result = await CartService.addToCart(cid, pid)
     if (result.statusCode === 500 || result.statusCode === 400) {
-        return res.status(result.statusCode).json({ status: 'error', error: result.response.error })
-        // send(result.response.error)
+        return res.status(result.statusCode).json({ status: 'error', error: result })
     }
     res.status(result.statusCode).send(result.response.payload)
 }
@@ -74,7 +74,7 @@ const deleteProductFromCartController = async (req, res) => {
     if (result.statusCode === 500 || result.statusCode === 400 || result.statusCode === 404) {
         return res.status(result.statusCode).send(result.response.error)
     }
-    res.status(result.statusCode).send(result.response.payload)
+    res.status(result.statusCode).send(result)
 }
 
 const updateProductFromCartController = async (req, res) => {
@@ -157,7 +157,7 @@ const purchaseCartController = async (req, res) => {
             noStockProducts: productsAfterPurchase,
             purchaseBuyer: ticket.purchaser,
             purchaseAmount: Math.round(ticket.amount * 1.2),
-            message: `Mensaje enviado a ${email}.`  
+            message: `Mensaje enviado a ${email}.`
         })
     } catch (error) {
         return res.status(500).send(error.message)

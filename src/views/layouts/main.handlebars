@@ -53,10 +53,13 @@
             <a href="/products"
               class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Productos</a>
           </li>
-          <li>
+          <li class="">
             <a href="/carts/{{user.cart}}"
               class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Mi
-              carrito</a>
+              carrito
+              <span class=" w-16 text-left md:text-center text-red-600">{{cartTotal}}</span>
+            </a>
+
           </li>
           <li>
             <a href="/current"

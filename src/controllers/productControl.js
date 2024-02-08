@@ -86,9 +86,7 @@ const getProductByIdController = async (req, res) => {
 const addProductController = async (req, res) => {
     let { title, description, price, code, category, stock, thumbnail } = req.body
     const product = { title, description, price, code, category, stock, thumbnail }
-    console.log(product)
     if (!title || !description || !price || !code || !category || !stock || !thumbnail) {
-
         const error = CustomError.createError({
             name: "ERROR EN LA CREACIÓN DEL PRODUCTO",
             cause: generateErrorInfo(product),
