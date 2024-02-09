@@ -2,6 +2,7 @@ import { CartService, ProductService, UserService } from '../services/index.js'
 import UserDTO from "../dto/userDTO.js"
 import logger from '../utils/logger.js'
 import dotenv from 'dotenv'
+import config from '../config/config.js'
 dotenv.config()
 
 
@@ -35,13 +36,13 @@ const getProductsViewController = async (req, res) => {
         const modifiedUrl = req.originalUrl.replace(`page=${req.query.page}`, `page=${result.prevPage}`)
 
         if (req.hostname == 'localhost') {
-            previousLink = `http://${req.hostname}:8080${modifiedUrl}`
+            previousLink = `http://${req.hostname}:${config.port}${modifiedUrl}`
         } else {
             previousLink = `http://${req.hostname}${modifiedUrl}`
         }
     } else {
         if (req.hostname == 'localhost') {
-            previousLink = `http://${req.hostname}:8080${req.originalUrl}?page=${result.prevPage}`
+            previousLink = `http://${req.hostname}:${config.port}${req.originalUrl}?page=${result.prevPage}`
         } else {
             previousLink = `http://${req.hostname}${req.originalUrl}?page=${result.prevPage}`
         }
@@ -52,13 +53,13 @@ const getProductsViewController = async (req, res) => {
 
         const modifiedUrl = req.originalUrl.replace(`page=${req.query.page}`, `page=${result.nextPage}`)
         if (req.hostname == 'localhost') {
-            nextLink = `http://${req.hostname}:8080${modifiedUrl}`
+            nextLink = `http://${req.hostname}:${config.port}${modifiedUrl}`
         } else {
             nextLink = `http://${req.hostname}${modifiedUrl}`
         }
     } else {
         if (req.hostname == 'localhost') {
-            nextLink = `http://${req.hostname}:8080${req.originalUrl}?page=${result.nextPage}`
+            nextLink = `http://${req.hostname}:${config.port}${req.originalUrl}?page=${result.nextPage}`
         } else {
             nextLink = `http://${req.hostname}${req.originalUrl}?page=${result.nextPage}`
         }
@@ -70,7 +71,7 @@ const getProductsViewController = async (req, res) => {
     for (let index = 1; index <= result.totalPages; index++) {
         if (!req.query.page) {
             if (req.hostname == 'localhost') {
-                link = `http://${req.hostname}:8080${req.originalUrl}?page=${index}`
+                link = `http://${req.hostname}:${config.port}${req.originalUrl}?page=${index}`
             } else {
                 link = `http://${req.hostname}${req.originalUrl}?page=${index}`
 
@@ -78,7 +79,7 @@ const getProductsViewController = async (req, res) => {
 
         } else if (req.query.page > result.totalPages) {
             if (req.hostname == 'localhost') {
-                link = `http://${req.hostname}:8080${req.originalUrl}&page=${index}`
+                link = `http://${req.hostname}:${config.port}${req.originalUrl}&page=${index}`
             } else {
                 link = `http://${req.hostname}${req.originalUrl}&page=${index}`
 
@@ -88,7 +89,7 @@ const getProductsViewController = async (req, res) => {
 
             const modifiedUrl = req.originalUrl.replace(`page=${req.query.page}`, `page=${index}`)
             if (req.hostname == 'localhost') {
-                link = `http://${req.hostname}:8080${modifiedUrl}`
+                link = `http://${req.hostname}:${config.port}${modifiedUrl}`
             } else {
                 link = `http://${req.hostname}${modifiedUrl}`
 
@@ -143,9 +144,11 @@ const getProductByIdViewController = async (req, res) => {
             error: 'No pudimos encontrar el producto con este ID!!'
         })
     }
+    const cartTotal = await CartService.getAll(user.cart)
     res.status(200).render("productDetail", {
         product: product.response.payload,
         user,
+        cartTotal: cartTotal.response.payload.products.length,
         userID,
         premium: user.role === 'premium' || user.role === 'admin' ? true : false
     })
@@ -172,10 +175,11 @@ const getProductsFromCartViewController = async (req, res) => {
     let amount = 0
     cartProducts.response.payload.products.map(prd => amount += prd.product.price)
     let finalPrice = amount * 1.2
-
+    const cartTotal = await CartService.getAll(user.cart)
     res.status(cartProducts.statusCode).render("cart", {
         user,
         userID,
+        cartTotal: cartTotal.response.payload.products.length,
         cartProducts: cartProducts.response.payload.products,
         cartId: cartProducts.response.payload._id,
         subTotal: Math.round(amount),
