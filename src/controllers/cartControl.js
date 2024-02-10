@@ -116,7 +116,7 @@ const purchaseCartController = async (req, res) => {
                 // Calculamos el precio total de los productos, segun la cantidad comprada
                 amount += (purchaseCart.products[index].quantity * productToBuy.price)
                 // Agregamos el producto all Array del ticket
-                productsToTicket.push({ product: productToBuy._id, price: productToBuy.price, quantity: purchaseCart.products[index].quantity })
+                productsToTicket.push({ product: productToBuy._id, title: productToBuy.title, price: productToBuy.price, quantity: purchaseCart.products[index].quantity })
             }
         }
         // Eliminamos los productos comprados, en MongoDB
@@ -135,7 +135,8 @@ const purchaseCartController = async (req, res) => {
             auth: { user: config.nodemailer_user, pass: config.nodemailer_pass }
         }
         let transporter = nodemailer.createTransport(mailConfig)
-
+        // Construir el cuerpo del mensaje con detalles de los productos
+        const cuerpoMensaje = productsToTicket.map(prd => `<h4>${prd.title} </h4><h5>Cantidad: ${prd.quantity} | Total: $${prd.price * prd.quantity}</h5>`).join('\n');
         let email = req.session.user.email
         let message = {
             from: config.nodemailer_user,
@@ -144,13 +145,18 @@ const purchaseCartController = async (req, res) => {
             html: `<h1>[Orden de compra] eleM | Tienda de ropa online</h1>
             <hr />
             <h2> Usted a realizado una compra en nuestra tienda </h2>
-            <p>Número de ticket: ${ticket.code}</p>
-            <p>Total de la compra: $ ${ticket.amount}</p>
+            <h3>Número de ticket: ${ticket.code}</h3>
+            <h3>Total de la compra: $ ${ticket.amount}</h3>
+            <h3>Cantidad de productos: ${ticket.products.length}</h3>
+            <h3> Detalles de los productos: </h3>
+            <br>
+            \n\n${cuerpoMensaje}</p>
             <hr />
+            <br>
             Saludos,<br><strong>Equipo de eleM Uruguay.</strong>`
         }
         await transporter.sendMail(message)
-        logger.info(`El usuario ${email} a realizado una compra de ${ticket.amount}`)
+        logger.info(`El usuario ${email} a realizado una compra de $ ${ticket.amount}`)
         return res.status(200).render('checkoutRes', {
             user: req.session.user,
             purchaseCode: ticket.code,

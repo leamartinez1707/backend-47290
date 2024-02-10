@@ -189,6 +189,7 @@ const getProductsFromCartViewController = async (req, res) => {
 }
 const getSessionUser = async (req, res) => {
 
+
     const user = req.session.user
     let userID
     if (req.user.email === 'adminCoder@coder.com') {
@@ -198,8 +199,10 @@ const getSessionUser = async (req, res) => {
         userID = req.user._id.toString()
     }
     const userDTO = new UserDTO(user)
+    const cartTotal = await CartService.getAll(user.cart)
     res.render('sessions/profile', {
         user,
+        cartTotal: cartTotal.response.payload.products.length,
         userID,
         userDTO,
         premium: user.role === 'premium' || user.role === 'admin' ? true : false

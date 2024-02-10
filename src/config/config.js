@@ -21,5 +21,6 @@ export default {
     environment: process.env.ENVIRONMENT,
     port: opts.p || process.env.PORT || 8080,
     nodemailer_user: process.env.MAILER_USER,
-    nodemailer_pass: process.env.MAILER_PASS
+    nodemailer_pass: process.env.MAILER_PASS,
+    stripe_key: process.env.STRIPE_KEY
 }

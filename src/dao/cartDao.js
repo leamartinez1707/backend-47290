@@ -76,8 +76,6 @@ export default class CartDao {
                 response: {
                     status: 'error', error: `Cart "${cid}" was not found`
                 }
-
-                // return res.status(404).json({ status: 'error', error: `Cart "${cid}" was not found` })
             }
             let products = data
             let newCart
@@ -90,13 +88,7 @@ export default class CartDao {
                 }
             }
             newCart = products
-            // if (products.length > 0) {
-            //     newCart
-            // } else {
-            //     newCart.push(products)
-            // }
-            // res.status(400).json({ status: 'error', error: 'Field products is required' })
-
+           
             // VALIDACIONES PARA VERIFICAR SI LOS DATOS DEL BODY SON CORRECTOS
             for (const prd of newCart) {
 
@@ -106,25 +98,18 @@ export default class CartDao {
                         status: 'error', error: 'The properties ID or Quantity are not valid'
                     }
                 }
-                // {
-                //     return res.status(400).json({ status: 'error', error: 'The properties ID or Quantity are not valid' })
-                // }
                 if (prd.quantity === 0) return {
                     statusCode: 400,
                     response: {
                         status: 'error', error: 'Quantity cant be 0'
                     }
                 }
-                // return res.status(400).json({ status: 'error', error: 'Quantity cant be 0' })
-
                 if (typeof prd.quantity !== 'number') return {
                     statusCode: 400,
                     response: {
                         status: 'error', error: 'Quantity must be a Number'
                     }
                 }
-                // return res.status(400).json({ status: 'error', error: 'Quantity must be a Number' })
-
                 const prdToAdd = await this.modelProduct.findById(prd.product).lean()
                 if (prdToAdd === null) return {
                     statusCode: 400,
@@ -132,9 +117,6 @@ export default class CartDao {
                         status: 'error', error: `Product with ID: ${prd.product} was not found`
                     }
                 }
-                // {
-                //     return res.status(400).json({ status: 'error', error: `Product with ID: ${prd.product} was not found` })
-                // }
             }
             // MODIFICO LOS PRODUCTOS ANTERIORES POR LOS NUEVOS PRODUCTOS
             cart.products = newCart
@@ -147,15 +129,12 @@ export default class CartDao {
                     status: 'success', payload: cart.products
                 }
             }
-            // res.status(200).json({ status: 'success', payload: result })
         } catch (err) {
             return {
                 statusCode: 500,
                 response: {
                     status: 'error', payload: err
                 }
-
-                // res.status(500).json({ status: 'error', payload: err.message })
             }
         }
     }
