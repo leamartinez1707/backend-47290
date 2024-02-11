@@ -79,6 +79,10 @@
             title: `Producto agregado!!`,
             text: "Se agregó el producto correctamente",
             icon: "success"
+        }).then((result) => {
+            if(result.isConfirmed){
+                location.reload()
+            }
         })
     }
     function swalPermission() {
