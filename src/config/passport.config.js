@@ -13,8 +13,6 @@ import config from '../config/config.js'
 
 const localStrategy = local.Strategy
 
-
-
 const initializePassport = () => {
 
     passport.use('register', new localStrategy({

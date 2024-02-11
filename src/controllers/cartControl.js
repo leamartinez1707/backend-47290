@@ -118,18 +118,6 @@ const purchaseCartController = async (req, res) => {
                 // Agregamos el producto all Array del ticket
                 productsToTicket.push({ product: productToBuy._id, title: productToBuy.title, price: productToBuy.price, quantity: purchaseCart.products[index].quantity })
             }
-            // if (purchaseCart.products[index].quantity > productToBuy.stock && productToBuy.stock !== 0) {
-            //     // Se verifica si la cantidad del producto es mayor a la cantidad que hay en stock
-
-            //     amount += (productToBuy.stock * productToBuy.price)
-            //     // Eliminamos del carrito todos los productos que se compraron y dejamos los que no tenian stock
-            //     productsAfterPurchase = productsAfterPurchase.filter((prds) => prds.product._id.toString() == purchaseCart.products[index].product._id.toString())
-            //     // Agregamos el producto al Array del ticket
-            //     productsToTicket.push({ description: productToBuy.description, title: productToBuy.title, price: productToBuy.price, quantity: productToBuy.stock })
-            //     // Se actualiza el stock del producto a comprar
-            //     productToBuy.stock = 0
-            //     await ProductService.update(productToBuy._id, productToBuy)
-            // }
         }
         // Eliminamos los productos comprados, en MongoDB
         if (productsToTicket.length === 0) return res.status(400).render('pageError', { error: 'Su carrito de compra está vacio' })
@@ -138,7 +126,7 @@ const purchaseCartController = async (req, res) => {
         const ticket = await ticketModel.create({
             code: nanoid(),
             products: productsToTicket,
-            amount,
+            amount: amount * 1.2,
             purchaser: req.session.user.email
         })
 

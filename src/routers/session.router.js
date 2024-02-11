@@ -20,8 +20,8 @@ router.post('/register', passport.authenticate('register', {
 router.post('/login', passport.authenticate('login', { failureRedirect: '/session/errorLogin' }), async (req, res) => {
 
     try {
-
         if (!req.user) {
+            console.log(req.user)
             res.status(400).send({ status: 'error', error: error.message })
         }
         if (req.user.email == 'adminCoder@coder.com') {
