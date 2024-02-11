@@ -4,17 +4,30 @@ import userControl from '../controllers/userControl.js'
 import { verifyRoles } from '../middlewares/auth.middlewares.js'
 import logger from '../utils/logger.js'
 import multer from 'multer'
+import config from '../config/config.js'
 
 const router = Router()
-
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'public/')
+    destination: (req, file, cb) => {
+        // Configura la ubicación de destino basada en algún criterio (por ejemplo, la fecha actual)
+        const destination = `public/uploads`;
+        cb(null, destination);
     },
-    filename: function (req, file, cb) {
-        cb(null, file.originalname)
-    }
-})
+    filename: (req, file, cb) => {
+        const date = new Date();
+        // Usa el nombre original del archivo
+        cb(null, `${file.originalname}`);
+    },
+});
+
+// const storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//         cb(null, 'public/')
+//     },
+//     filename: function (req, file, cb) {
+//         cb(null, file.originalname)
+//     }
+// })
 const uploader = multer({ storage })
 
 router.get('/premium/:uid', verifyRoles(['premium', 'user']), async (req, res) => {
@@ -46,32 +59,6 @@ router.get('/control/updateProduct', verifyRoles(['premium', 'admin']), async (r
     res.render('actions/updateProduct', {
         user: req.session.user
     })
-})
-router.post('/premium/:uid', uploader.single('archivo'), async (req, res) => {
-
-    try {
-        const uid = req.params.uid
-        if (!req.file) return res.status(400).json({ status: 'error', error: 'No hay archivo adjunto' })
-        const user = await UserModel.findById(uid).lean()
-        if (!user) {
-            return res.status(404).json({ status: 'error', error: 'Usuario no encontrado' });
-        }
-        if (!user) {
-            return res.status(404).json({ status: 'error', error: 'Usuario no encontrado' });
-        }
-        user.documents.push({
-            name: req.file.filename
-        },
-            {
-                reference: `http://localhost:8080/${req.file.filename}`
-            });
-
-        await UserModel.findByIdAndUpdate(uid, user)
-        res.status(200).json({ status: 'success', payload: user })
-    } catch (error) {
-        res.status(500).json({ status: 'error', error: error })
-    }
-
 })
 router.put('/updateRol/:email/:rol', userControl.updateRol)
 router.delete('/', userControl.deleteUsers)
