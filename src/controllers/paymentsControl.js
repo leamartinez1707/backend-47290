@@ -49,7 +49,7 @@ const createSession = async (req, res) => {
                     description: prd.description
                 },
                 currency: 'usd',
-                unit_amount: parseInt(prd.price * 1.2) * 100
+                unit_amount: Math.round(parseInt(prd.price * 1.2) * 100)
             },
             quantity: prd.quantity
         }));

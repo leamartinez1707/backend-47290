@@ -126,7 +126,7 @@ const purchaseCartController = async (req, res) => {
         const ticket = await ticketModel.create({
             code: nanoid(),
             products: productsToTicket,
-            amount: amount * 1.2,
+            amount: Math.round(amount * 1.2),
             purchaser: req.session.user.email
         })
 
