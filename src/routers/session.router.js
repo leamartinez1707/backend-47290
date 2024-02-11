@@ -19,30 +19,35 @@ router.post('/register', passport.authenticate('register', {
 
 router.post('/login', passport.authenticate('login', { failureRedirect: '/session/errorLogin' }), async (req, res) => {
 
-    if (!req.user) {
-        res.status(400).send({ status: 'error', error: error.message })
-    }
-    if (req.user.email == 'adminCoder@coder.com') {
-        req.session.user = {
-            email: req.user.email,
-            role: req.user.role,
-            first_name: req.user.first_name
-        }
-    } else {
-        req.session.user = {
-            first_name: req.user.first_name,
-            last_name: req.user.last_name,
-            email: req.user.email,
-            age: req.user.age,
-            role: req.user.role,
-            cart: req.user.cart
-        }
-    }
-    await UserModel.findOneAndUpdate({ email: req.session.user.email }, { last_login: Date.now() })
-    logger.info(`Usuario ${req.user.email} ha ingresado con éxito en la web`)
+    try {
 
-    res.redirect('/products')
+        if (!req.user) {
+            res.status(400).send({ status: 'error', error: error.message })
+        }
+        if (req.user.email == 'adminCoder@coder.com') {
+            req.session.user = {
+                email: req.user.email,
+                role: req.user.role,
+                first_name: req.user.first_name
+            }
+        } else {
+            req.session.user = {
+                first_name: req.user.first_name,
+                last_name: req.user.last_name,
+                email: req.user.email,
+                age: req.user.age,
+                role: req.user.role,
+                cart: req.user.cart
+            }
+        }
+        await UserModel.findOneAndUpdate({ email: req.session.user.email }, { last_login: Date.now() })
+        logger.info(`Usuario ${req.user.email} ha ingresado con éxito en la web`)
 
+        res.redirect('/products')
+    }
+    catch (error) {
+        logger.error(error.message)
+    }
 })
 
 

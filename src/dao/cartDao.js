@@ -88,7 +88,7 @@ export default class CartDao {
                 }
             }
             newCart = products
-           
+
             // VALIDACIONES PARA VERIFICAR SI LOS DATOS DEL BODY SON CORRECTOS
             for (const prd of newCart) {
 
@@ -166,18 +166,18 @@ export default class CartDao {
             if (cart === null) return {
                 statusCode: 400,
                 response: {
-                    status: 'error', error: `Cart "${cid}" was not found`
+                    status: 'error', error: `El carrito "${cid}" no fue encontrado`
                 }
             }
             let product = await this.modelProduct.findById(pid).lean()
 
             if (product === null) return {
                 statusCode: 400,
-                response: { status: 'error', error: `Product "${pid}" was not found` }
+                response: { status: 'error', error: `El producto "${pid}" no fue encontrado` }
             }
             if (product.stock === 0) return {
                 statusCode: 400,
-                response: { status: 'error', error: `Product "${pid}" is out of stock` }
+                response: { status: 'error', error: `El producto no tiene stock disponible` }
             }
 
             let quantity = 1
@@ -185,13 +185,23 @@ export default class CartDao {
 
             if (quantity === null) return {
                 statusCode: 400,
-                response: { status: 'error', error: 'Quantity is null' }
+                response: { status: 'error', error: 'Especifique la cantidad para agregar' }
             }
             let productIndex = cart.products.findIndex(prd => prd.product._id == pid)
-            if (productIndex < 0) {
-                cart.products.push(product)
+            if (productIndex >= 0) {
+                // Verificar si la cantidad en el carrito más la cantidad a agregar supera el stock
+                const newQuantity = cart.products[productIndex].quantity + quantity;
+                if (newQuantity > product.product.stock) {
+                    return {
+                        statusCode: 400,
+                        response: { status: 'error', error: 'No hay suficiente stock para agregar más unidades' }
+                    }
+                }
+
+                // Actualizar la cantidad en el carrito
+                cart.products[productIndex].quantity = newQuantity;
             } else {
-                cart.products[productIndex].quantity++
+                cart.products.push(product)
             }
             await this.model.findByIdAndUpdate(cid, cart, { Document: 'after' })
             cart = await this.model.findById(cid).lean()
@@ -203,7 +213,7 @@ export default class CartDao {
         } catch (err) {
             return {
                 statusCode: 500,
-                response: { status: 'error', payload: err.message }
+                response: { status: 'error', error: err.message }
             }
         }
     }

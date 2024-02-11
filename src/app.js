@@ -12,6 +12,7 @@ import sessionViewRouter from './routers/sessionView.router.js'
 import sessionRouter from './routers/session.router.js'
 import chatRouter from './routers/chat.router.js'
 import usersRouter from './routers/users.router.js'
+import paymentsRouter from './routers/payments.router.js'
 import config from './config/config.js'
 import mockingRouter from './routers/mocking.router.js'
 import errorHandler from './middlewares/errors.js'
@@ -83,6 +84,7 @@ try {
     app.use('/api/products', productRouter)
     app.use('/api/carts', cartsRouter)
     app.use('/api/users', usersRouter)
+    app.use('/api/payments', paymentsRouter)
     app.use('/products', viewsRouter)
     app.use('/carts', viewsRouter)
     app.use('/users', viewsRouter)

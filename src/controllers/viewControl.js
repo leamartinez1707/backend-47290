@@ -107,6 +107,7 @@ const getProductsViewController = async (req, res) => {
 
         userID = req.user._id.toString()
     }
+
     const cartTotal = await CartService.getAll(user.cart)
     return res.render("home",
         {
@@ -173,12 +174,14 @@ const getProductsFromCartViewController = async (req, res) => {
         })
     }
     let amount = 0
-    cartProducts.response.payload.products.map(prd => amount += prd.product.price)
+    cartProducts.response.payload.products.map(prd => amount += (prd.product.price * prd.quantity))
     let finalPrice = amount * 1.2
     const cartTotal = await CartService.getAll(user.cart)
+    let stripePublishableKey = config.stripePublishableKey
     res.status(cartProducts.statusCode).render("cart", {
         user,
         userID,
+        stripePublishableKey,
         cartTotal: cartTotal.response.payload.products.length,
         cartProducts: cartProducts.response.payload.products,
         cartId: cartProducts.response.payload._id,

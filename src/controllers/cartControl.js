@@ -61,7 +61,7 @@ const addProductToCartController = async (req, res) => {
     }
     const result = await CartService.addToCart(cid, pid)
     if (result.statusCode === 500 || result.statusCode === 400) {
-        return res.status(result.statusCode).json({ status: 'error', error: result })
+        return res.status(result.statusCode).json({ status: 'error', error: result.response.error })
     }
     res.status(result.statusCode).send(result.response.payload)
 }
@@ -118,6 +118,18 @@ const purchaseCartController = async (req, res) => {
                 // Agregamos el producto all Array del ticket
                 productsToTicket.push({ product: productToBuy._id, title: productToBuy.title, price: productToBuy.price, quantity: purchaseCart.products[index].quantity })
             }
+            // if (purchaseCart.products[index].quantity > productToBuy.stock && productToBuy.stock !== 0) {
+            //     // Se verifica si la cantidad del producto es mayor a la cantidad que hay en stock
+
+            //     amount += (productToBuy.stock * productToBuy.price)
+            //     // Eliminamos del carrito todos los productos que se compraron y dejamos los que no tenian stock
+            //     productsAfterPurchase = productsAfterPurchase.filter((prds) => prds.product._id.toString() == purchaseCart.products[index].product._id.toString())
+            //     // Agregamos el producto al Array del ticket
+            //     productsToTicket.push({ description: productToBuy.description, title: productToBuy.title, price: productToBuy.price, quantity: productToBuy.stock })
+            //     // Se actualiza el stock del producto a comprar
+            //     productToBuy.stock = 0
+            //     await ProductService.update(productToBuy._id, productToBuy)
+            // }
         }
         // Eliminamos los productos comprados, en MongoDB
         if (productsToTicket.length === 0) return res.status(400).render('pageError', { error: 'Su carrito de compra está vacio' })
@@ -136,7 +148,14 @@ const purchaseCartController = async (req, res) => {
         }
         let transporter = nodemailer.createTransport(mailConfig)
         // Construir el cuerpo del mensaje con detalles de los productos
-        const cuerpoMensaje = productsToTicket.map(prd => `<h4>${prd.title} </h4><h5>Cantidad: ${prd.quantity} | Total: $${prd.price * prd.quantity}</h5>`).join('\n');
+        const messageBody = productsToTicket.map(prd => `
+        <tr>
+        <td>${prd.title} </td>
+        <td>${prd.quantity}</td>
+        <td>$ ${prd.price * prd.quantity}</td>
+        </tr>
+        `).join('\n');
+
         let email = req.session.user.email
         let message = {
             from: config.nodemailer_user,
@@ -149,14 +168,40 @@ const purchaseCartController = async (req, res) => {
             <h3>Total de la compra: $ ${ticket.amount}</h3>
             <h3>Cantidad de productos: ${ticket.products.length}</h3>
             <h3> Detalles de los productos: </h3>
-            <br>
-            \n\n${cuerpoMensaje}</p>
+            <style>
+            table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            }
+            th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+            }
+            th {
+            background-color: #f2f2f2;
+            }
+            </style>
+            <table>
+            <thead>
+            <tr>
+            <th>Título</th>
+            <th>Cantidad</th>
+            <th>Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            ${messageBody}
+            </tbody>
+            </table>
             <hr />
+            <br>
             <br>
             Saludos,<br><strong>Equipo de eleM Uruguay.</strong>`
         }
         await transporter.sendMail(message)
-        logger.info(`El usuario ${email} a realizado una compra de $ ${ticket.amount}`)
+        logger.info(`El usuario ${email} a realizado una compra de $ ${ticket.amount * 1.2}`)
         return res.status(200).render('checkoutRes', {
             user: req.session.user,
             purchaseCode: ticket.code,
