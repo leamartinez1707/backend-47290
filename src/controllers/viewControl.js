@@ -113,7 +113,7 @@ const getProductsViewController = async (req, res) => {
         {
             user,
             userID,
-            cartTotal: cartTotal.response.payload.products.length,
+            cartTotal: req.user.email === 'adminCoder@coder.com' ? 0 : cartTotal.response.payload.products.length,
             products: result.docs,
             paginateInfo: {
                 totalPages,
@@ -149,7 +149,7 @@ const getProductByIdViewController = async (req, res) => {
     res.status(200).render("productDetail", {
         product: product.response.payload,
         user,
-        cartTotal: cartTotal.response.payload.products.length,
+        cartTotal: req.user.email === 'adminCoder@coder.com' ? 0 : cartTotal.response.payload.products.length,
         userID,
         premium: user.role === 'premium' || user.role === 'admin' ? true : false
     })
@@ -182,7 +182,7 @@ const getProductsFromCartViewController = async (req, res) => {
         user,
         userID,
         stripePublishableKey,
-        cartTotal: cartTotal.response.payload.products.length,
+        cartTotal: req.user.email === 'adminCoder@coder.com' ? 0 : cartTotal.response.payload.products.length,
         cartProducts: cartProducts.response.payload.products,
         cartId: cartProducts.response.payload._id,
         subTotal: Math.round(amount),
@@ -201,11 +201,15 @@ const getSessionUser = async (req, res) => {
 
         userID = req.user._id.toString()
     }
+
+    if (user.email === 'adminCoder@coder.com') {
+        user.role = 'admin'
+    }
     const userDTO = new UserDTO(user)
     const cartTotal = await CartService.getAll(user.cart)
     res.render('sessions/profile', {
         user,
-        cartTotal: cartTotal.response.payload.products.length,
+        cartTotal: req.user.email === 'adminCoder@coder.com' ? 0 : cartTotal.response.payload.products.length,
         userID,
         userDTO,
         premium: user.role === 'premium' || user.role === 'admin' ? true : false

@@ -21,8 +21,9 @@ const deleteOneUser = async (req, res) => {
 const updateRol = async (req, res) => {
     const email = req.params.email
     const rol = req.params.rol
-    console.log(`controller rol ${rol}`)
-    req.user.role = req.params.rol
+    if (req.session.user.email === email) {
+        req.user.role = req.params.rol
+    }
     const result = await UserService.updateRol(email, rol)
     res.status(result.statusCode).json({ status: 'success', payload: result })
 }

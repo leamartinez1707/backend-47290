@@ -1,4 +1,4 @@
-<section class="overflow-hidden py-11 font-poppins">
+<section class="overflow-hidden py-11 font-poppins min-h-screen">
     <div class="max-w-1xl sm:max-w-5xl px-4 py-4 mx-auto lg:py-8 md:px-6 bg-gray-50">
         <div class="flex flex-wrap -mx-4 ">
             <div class="w-full mb-8 md:w-1/2 md:mb-0">
@@ -60,6 +60,7 @@
                 <div class="lg:pl-20">
                     <div class="mb-8 ">
                         <label class="hidden" id="cart_id">{{user.cart}}</label>
+                        <label class="hidden" id="user_role">{{user.role}}</label>
                         <h2 class="max-w-xl mb-6 text-2xl font-bold dark:text-gray-800 md:text-4xl">
                             {{product.title}}</h2>
                         <p class="inline-block mb-6 text-4xl font-bold text-gray-800 dark:text-gray-800 ">
@@ -130,8 +131,9 @@
         });
     }
     function addToCart(pid) {
-
-        let cart_id = document.getElementById('cart_id').innerHTML
+        const role = document.getElementById('user_role').innerHTML
+        if (role === 'admin') return swalPermission()
+        const cart_id = document.getElementById('cart_id').innerHTML
         if (!cart_id) return swalPermission()
         fetch(`/api/carts/${cart_id}/product/${pid}`, {
             method: 'post'

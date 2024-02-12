@@ -41,7 +41,12 @@
             title: `Usuario borrado!!`,
             text: "Se borró el usuario correctamente",
             icon: "warning"
-        })
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si se hace clic en "Aceptar", actualiza la página
+                location.reload();
+            }
+        });
     }
     // Swal.fire
     function swalUpdate() {

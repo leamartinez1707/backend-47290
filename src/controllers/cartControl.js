@@ -44,7 +44,9 @@ const createCartController = async (req, res) => {
 }
 
 const addProductToCartController = async (req, res) => {
-
+    if (req.session.user.role === 'admin') {
+        return res.status(403).json({ status: 'error', error: 'No puedes comprar productos siendo Admin!' })
+    }
     const cid = req.params.cid
     const pid = req.params.pid
     const cart = await CartService.getAll(cid)
