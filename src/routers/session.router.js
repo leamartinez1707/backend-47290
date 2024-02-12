@@ -96,6 +96,13 @@ router.post('/forget_password', async (req, res) => {
         service: 'gmail',
         auth: { user: config.nodemailer_user, pass: config.nodemailer_pass }
     }
+
+    let url
+    if (config.environment === 'production') {
+        url = `http://${req.hostname}/reset_password/${token}`
+    } else {
+        url = `http://${req.hostname}:${config.port}/reset_password/${token}`
+    }
     let transporter = nodemailer.createTransport(mailConfig)
     let message = {
         from: config.nodemailer_user,
@@ -103,8 +110,8 @@ router.post('/forget_password', async (req, res) => {
         subject: '[Nueva contraseña] eleM | Tienda de ropa',
         html: `<h1>[Nueva contraseña] eleM | Tienda de ropa</h1>
         <hr />
-        Has pedido un reinicio de contraseña. Lo puedes hacer desde el siguiente link: <a href="http://${req.hostname}:${config.port}/reset_password/${token}"
-        >http://${req.hostname}:${config.port}/reset_password/${token}</a>
+        Has pedido un reinicio de contraseña. Lo puedes hacer desde el siguiente link: <a href="${url}"
+        >Presione aquí para reiniciar la contraseña</a>
         <hr />
         Saludos,<br><strong>Equipo de eleM Uruguay.</strong>`
     }
