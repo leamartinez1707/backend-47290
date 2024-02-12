@@ -45,7 +45,7 @@
     function swalUpdate() {
         Swal.fire({
             title: `Producto modificado!!`,
-            text: "Se agregó el producto correctamente",
+            text: "Se modificó el producto correctamente",
             icon: "success"
         })
     }
@@ -78,7 +78,7 @@
         fetch(`/api/products/${pid}`, requestOptions)
             .then(result => result.json())
             .then(result => {
-                if (result.response.status === 'error') return swalError(result.response.error)
+                if (result.status === 'error') return swalError(result.error)
                 swalUpdate()
                 clearForm()
             })

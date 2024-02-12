@@ -102,6 +102,11 @@ const addProductController = async (req, res) => {
         if (req.session.user) {
             product.owner = req.session.user.email
         }
+        const products = await ProductService.getAll()
+        const exists = products.response.payload.find(prd => prd.code === product.code)
+
+        if (exists) return res.status(400).json({ status: 'error', error: 'El producto con este codigo ya existe!' })
+
         const result = await ProductService.create(product)
         if (result.statusCode === 500) {
             const error = CustomError.createError({
@@ -127,6 +132,10 @@ const updateProductController = async (req, res) => {
         if (product.response.payload.owner !== req.session.user.email) return res.status(403).json({ status: 'error', payload: 'No autorizado para editar producto' })
     }
     const productToUpdate = req.body
+    const products = await ProductService.getAll()
+    const exists = products.response.payload.find(prd => prd.code === productToUpdate.code)
+    if (exists && exists._id !== pid) return res.status(400).json({ status: 'error', error: 'Ya existe un producto con este codigo!' })
+
     const result = await ProductService.update(pid, productToUpdate)
     if (result.statusCode === 500) {
         return res.status(result.statusCode).send(result.response.error)
@@ -146,8 +155,14 @@ const deleteProductController = async (req, res) => {
     if (req.session.user.role === 'premium') {
         if (product.response.payload.owner !== req.session.user.email) return res.status(403).json({ status: 'error', error: 'No autorizado, solo el dueño del producto puede borrarlo!' })
     }
+
+    if (req.session.user.role === 'user') return res.status(403).json({ status: 'error', error: 'No autorizado, solo admin o premium puede utilizar esta funcion' })
+    const result = await ProductService.delete(pid)
+    if (result.statusCode === 500 || result.statusCode === 400) {
+        return res.status(result.statusCode).json({ status: 'error', error: 'No se pudo borrar el producto' })
+    }
     const user = await UserService.getOne(product.response.payload.owner)
-    if (user.response.payload.role === 'premium') {
+    if (user.response.status !== 'error' && user.response.payload.role === 'premium') {
         let message = {
             from: config.nodemailer_user,
             to: product.response.payload.owner,
@@ -166,12 +181,7 @@ const deleteProductController = async (req, res) => {
         }
         await transporter.sendMail(message)
     }
-    if (req.session.user.role === 'user') return res.status(403).json({ status: 'error', error: 'No autorizado, solo admin o premium puede utilizar esta funcion' })
-    const result = await ProductService.delete(pid)
-    if (result.statusCode === 500 || result.statusCode === 400) {
-        return res.status(result.statusCode).send(result.response.error)
-    }
-    res.status(result.statusCode).send(result.response.payload)
+    res.status(result.statusCode).json({ status: 'success', payload: result })
 
 }
 export default { getProducts, getProductByIdController, addProductController, updateProductController, deleteProductController }
