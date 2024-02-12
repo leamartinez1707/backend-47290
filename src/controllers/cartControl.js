@@ -191,13 +191,13 @@ const purchaseCartController = async (req, res) => {
             Saludos,<br><strong>Equipo de eleM Uruguay.</strong>`
         }
         await transporter.sendMail(message)
-        logger.info(`El usuario ${email} a realizado una compra de $ ${ticket.amount * 1.2}`)
+        logger.info(`El usuario ${email} a realizado una compra de $ ${ticket.amount}`)
         return res.status(200).render('checkoutRes', {
             user: req.session.user,
             purchaseCode: ticket.code,
             noStockProducts: productsAfterPurchase,
             purchaseBuyer: ticket.purchaser,
-            purchaseAmount: Math.round(ticket.amount * 1.2),
+            purchaseAmount: ticket.amount,
             message: `Mensaje enviado a ${email}.`
         })
     } catch (error) {
