@@ -21,6 +21,7 @@ import passport from 'passport'
 import initializePassport from './config/passport.config.js'
 import swaggerJSDoc from 'swagger-jsdoc'
 import swaggerUiExpress from 'swagger-ui-express'
+import cors from 'cors'
 
 const app = express();
 
@@ -37,7 +38,9 @@ app.use(session({
 initializePassport()
 app.use(passport.initialize())
 app.use(passport.session())
-
+app.use(cors({
+    origin: 'http://localhost:5173'
+}))
 // Para cargar archivos en formato json con POST
 app.use(express.json())
 // Con esta expresion permitimos enviar datos POST desde un formulario HTML
