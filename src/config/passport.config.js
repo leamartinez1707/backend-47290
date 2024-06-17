@@ -6,11 +6,6 @@ import GitHubStrategy from 'passport-github2'
 import { createHash, validatePassword } from "../utils/utils.js";
 import config from '../config/config.js'
 
-
-
-// Libreria 
-// Profesionalizando nuestro Login.
-
 const localStrategy = local.Strategy
 
 const initializePassport = () => {

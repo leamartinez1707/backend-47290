@@ -1,4 +1,4 @@
-import { expect, assert } from "chai";
+import { expect } from "chai";
 import supertest from "supertest"
 import { fakerES as faker } from '@faker-js/faker'
 
