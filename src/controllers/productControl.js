@@ -47,6 +47,7 @@ const getProducts = async (req, res) => {
     } else {
         nextLink = `http://${req.hostname}:8080${req.originalUrl}&page=${result.nextPage}`
     }
+    
     return res.send({
         statusCode: 200,
         response: {

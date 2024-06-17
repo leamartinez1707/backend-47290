@@ -60,7 +60,6 @@ try {
         dbName: config.mongo_db_name
     })
     logger.info('Conectado a la DB')
-
     const swaggerOptions = {
         definition: {
             openapi: '3.0.1',
@@ -97,6 +96,7 @@ try {
     app.use(errorHandler)
 
     Sockets(io)
+
 
 } catch (error) {
     logger.error(error.message)
